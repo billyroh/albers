@@ -1,0 +1,22 @@
+{
+  "name": "albers",
+  "version": "1.0.0",
+  "description": "Generative art, based on the works of Josef Albers.",
+  "main": "Gruntfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/billyroh/albers.git"
+  },
+  "author": "Billy Roh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/billyroh/albers/issues"
+  },
+  "homepage": "https://github.com/billyroh/albers#readme",
+  "devDependencies": {
+    
+  }
+}
