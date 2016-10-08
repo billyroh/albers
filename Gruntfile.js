@@ -35,13 +35,13 @@ module.exports = function(grunt) {
       }
     },
     watch: {
+      options: {
+        livereload: true
+      },
       scripts: {
         files: ['src/*'],
         tasks: ['updateDom']
       },
-      options: {
-        livereload: true
-      }
     }
   });
 
