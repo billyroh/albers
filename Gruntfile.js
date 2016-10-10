@@ -39,7 +39,7 @@ module.exports = function(grunt) {
         livereload: true
       },
       scripts: {
-        files: ['src/*'],
+        files: ['src/*', 'javascripts/*'],
         tasks: ['updateDom']
       },
     }

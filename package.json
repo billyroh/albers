@@ -18,6 +18,9 @@
   "homepage": "https://github.com/billyroh/albers#readme",
   "devDependencies": {
     "connect-livereload": "^0.5.4",
+    "d3-array": "^1.0.1",
+    "d3-scale": "^1.0.3",
+    "d3-transition": "^1.0.2",
     "grunt": "^0.4.5",
     "grunt-contrib-connect": "^1.0.0",
     "grunt-contrib-pug": "^1.0.0",
