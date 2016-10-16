@@ -51,8 +51,9 @@ function getWidth(index) {
 setCoordinates()
 
 function setCoordinates() {
-  squares.attr('x', (d, i) => getInitialX(i))
-         .attr('y', (d, i) => getInitialY(i))
+  squares.attr('transform', (d, i) => {
+    return `translate(${getInitialX(i)}, ${getInitialY(i)}) rotate(0)`
+  })
 }
 
 function getInitialX(index) {
@@ -76,43 +77,52 @@ homageCanvas.on('mousemove', function () {
     homageCanvas.selectAll('rect')
       .transition(d3.easeBounce)
         .duration(75)
-        .attr('x', (d, i) => getNewX(i, xCoordinate))
-        .attr('y', (d, i) => getNewY(i, yCoordinate))
+        .attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
         .on('end', () => { initialAnimationDidFinish = true})
   // Once the initial animation is finished, track the cursor linearly
   } else {
-    squares
-      .attr('x', (d, i) => getNewX(i, xCoordinate))
-      .attr('y', (d, i) => getNewY(i, yCoordinate))
+    squares.attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
   }
 
   // TODO (bonus point) add drop shadow when animating
-  // TODO (bonus point) make the square rotate/twist toward the cursor too
 })
 
 homageCanvas.on('mouseleave', function () {
   homageCanvas.selectAll('rect')
     .transition(d3.easeElasticInOut)
       .duration(250)
-      .attr('x', (d, i) => getInitialX(i))
-      .attr('y', (d, i) => getInitialY(i))
+      .attr('transform', (d, i) => {
+        if (i === 0) { return }
+        return `translate(${getInitialX(i)}, ${getInitialY(i)}) rotate(0)`
+      })
       .on('end', () => { initialAnimationDidFinish = false})
 })
 
+let initialAnimationDidFinish = false
 
 let cursorScale = d3.scaleLinear()
   .domain([0, maxWidth])
   .range([-1, 1])
   .clamp(true)
 
+function getNewTransform(i, xCoordinate, yCoordinate) {
+  if (i === 0) { return }
+  let translateValues = `${getNewX(i, xCoordinate)}, ${getNewY(i, yCoordinate)}`
+  let rotationValue = `${getNewRotation(i, xCoordinate)}`
+  return `translate(${translateValues}) rotate(${rotationValue})`
+}
+
+function getNewRotation(i, xCoordinate) {
+  let rIncrement = (i / homageDataset.length) * 10
+  return cursorScale(xCoordinate) * rIncrement
+}
+
 function getNewX(i, xCoordinate) {
-  if (i == 0) { return }
   let xIncrement = (i / homageDataset.length) * (maxWidth * 0.2)
   return getInitialX(i) + (cursorScale(xCoordinate) * xIncrement)
 }
 
 function getNewY(i, yCoordinate) {
-  if (i == 0) { return }
   let yIncrement = (i / homageDataset.length) * (maxWidth * 0.2)
   return getInitialY(i) + (cursorScale(yCoordinate) * yIncrement)
 }
