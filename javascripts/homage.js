@@ -1,8 +1,8 @@
 // HOMAGE TO THE SQUARE
 
 // Basic variables
-let maxWidth = 200;
-let minWidth = 80;
+let maxWidth = 500
+let minWidth = maxWidth * 0.4
 
 // Palette
 let innerColor = {h: 55, s: .92, l: .65}
@@ -11,16 +11,16 @@ let outerColor = {h: 79, s: .58, l: .48}
 let homageDataset = []
 
 function generatePalette(iterationCount) {
-  let hIncrement = (innerColor.h - outerColor.h) / (iterationCount - 1);
-  let sIncrement = (innerColor.s - outerColor.s) / (iterationCount - 1);
-  let lIncrement = (innerColor.l - outerColor.l) / (iterationCount - 1);
+  let hIncrement = (innerColor.h - outerColor.h) / (iterationCount - 1)
+  let sIncrement = (innerColor.s - outerColor.s) / (iterationCount - 1)
+  let lIncrement = (innerColor.l - outerColor.l) / (iterationCount - 1)
 
   for (i of Array(iterationCount).keys()) {
     let color = {
       h: (outerColor.h + (hIncrement * i)),
       s: (outerColor.s + (sIncrement * i)),
       l: (outerColor.l + (lIncrement * i))
-    };
+    }
     homageDataset.push(color)
   }
 }
@@ -51,42 +51,68 @@ function getWidth(index) {
 setCoordinates()
 
 function setCoordinates() {
-  squares.attr('x', (d, i) => getX(i))
-         .attr('y', (d, i) => getY(i))
+  squares.attr('x', (d, i) => getInitialX(i))
+         .attr('y', (d, i) => getInitialY(i))
 }
 
-function getX(index) {
+function getInitialX(index) {
   return (maxWidth - getWidth(index)) / 2
 }
 
-function getY(index) {
-  let increment = maxWidth * 0.05;
+function getInitialY(index) {
+  let increment = maxWidth * 0.05
   return maxWidth - getWidth(index) - (increment * index)
 }
 
 // Interaction
-// TODO make the squares's xy coordinates gravitate toward the cursor
-// TODO (bonus point) make the square rotate/twist toward the cursor too
 homageCanvas.on('mousemove', function () {
-  // 1. get cursor coordinates
-  // 2. figure out if it's
-  let cursorThreshold = maxWidth * 0.1
   let xCoordinate = d3.mouse(this)[0]
+  let yCoordinate = d3.mouse(this)[1]
 
-  let cursorScale = d3.scaleLinear()
-    .domain([cursorThreshold, maxWidth - cursorThreshold])
-    .range([maxWidth * -0.1, maxWidth * 0.1])
-    .clamp(true)
+  // Use a transition for the initial animation
+  if (!initialAnimationDidFinish) {
+    homageCanvas.selectAll('rect')
+      .interrupt()
+    homageCanvas.selectAll('rect')
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('x', (d, i) => getNewX(i, xCoordinate))
+        .attr('y', (d, i) => getNewY(i, yCoordinate))
+        .on('end', () => { initialAnimationDidFinish = true})
+  // Once the initial animation is finished, track the cursor linearly
+  } else {
+    squares
+      .attr('x', (d, i) => getNewX(i, xCoordinate))
+      .attr('y', (d, i) => getNewY(i, yCoordinate))
+  }
 
-  // getX(i) + (someIncrement * someCoefficient)
-  // someCoefficient is percentage of how far the cursor is from the center
-  squares.attr('x', (d, i) => {
-    return getX(i) + cursorScale(xCoordinate)
-  })
+  // TODO (bonus point) add drop shadow when animating
+  // TODO (bonus point) make the square rotate/twist toward the cursor too
 })
 
-homageCanvas.on('mouseout', function () {
-  squares.attr('x', (d, i) => {
-    setCoordinates()
-  })
+homageCanvas.on('mouseleave', function () {
+  homageCanvas.selectAll('rect')
+    .transition(d3.easeElasticInOut)
+      .duration(250)
+      .attr('x', (d, i) => getInitialX(i))
+      .attr('y', (d, i) => getInitialY(i))
+      .on('end', () => { initialAnimationDidFinish = false})
 })
+
+
+let cursorScale = d3.scaleLinear()
+  .domain([0, maxWidth])
+  .range([-1, 1])
+  .clamp(true)
+
+function getNewX(i, xCoordinate) {
+  if (i == 0) { return }
+  let xIncrement = (i / homageDataset.length) * (maxWidth * 0.2)
+  return getInitialX(i) + (cursorScale(xCoordinate) * xIncrement)
+}
+
+function getNewY(i, yCoordinate) {
+  if (i == 0) { return }
+  let yIncrement = (i / homageDataset.length) * (maxWidth * 0.2)
+  return getInitialY(i) + (cursorScale(yCoordinate) * yIncrement)
+}
