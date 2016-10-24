@@ -21,73 +21,64 @@ function getPalette() {
 
 function getAnalagousPalette() {
   let color1 = getRandomColor()
-  let color4 = {
-    h: _.min([_.random(color1.h * .95, color1.h * 1.05, true), 360]),
-    s: _.random(.2, .8, true),
-    l: _.random(.2, .8, true),
-  }
+  let color4 = getRandomColor()
+  color4.h = getRandomHue(color1.h, .1)
 
   let hIncrement = _.round((color1.h - color4.h) / 3)
-  let sIncrement = (color1.s - color4.s) / 3
-  let lIncrement = (color1.l - color4.l) / 3
+  let sIncrement = _.floor((color1.s - color4.s) / 3, 2)
+  let lIncrement = _.floor((color1.l - color4.l) / 3, 2)
 
   let color2 = {
-    h: (color1.h + hIncrement),
-    s: (color1.s + sIncrement),
-    l: (color1.l + lIncrement)
+    h: (color4.h + hIncrement),
+    s: (color4.s + sIncrement),
+    l: (color4.l + lIncrement)
   }
   let color3 = {
-    h: (color1.h + (hIncrement * 2)),
-    s: (color1.s + (sIncrement * 2)),
-    l: (color1.l + (lIncrement * 2))
+    h: (color4.h + (hIncrement * 2)),
+    s: (color4.s + (sIncrement * 2)),
+    l: (color4.l + (lIncrement * 2))
   }
 
-  let palette = _.shuffle([color1, color2, color3, color4])
-  setSwatches(palette)
-
-  return palette
+  return _.shuffle([color1, color2, color3, color4])
 }
 
 function getComplementaryPalette() {
   let color1 = getRandomColor()
-  let color2 = {
-    h: _.min([_.random(color1.h * .9, color1.h * 1.1, true), 360]),
-    s: _.random(.2, .8, true),
-    l: _.random(.2, .8, true)
-  }
+  let color2 = getRandomColor()
+  color2.h = getRandomHue(color1.h, .1)
 
   let complementaryHue = (color1.h + 180) % 360;
-  let color4 = {
-    h: _.min([_.random(complementaryHue * .9, complementaryHue * 1.1, true), 360]),
-    s: _.random(.2, .8, true),
-    l: _.random(.2, .8, true)
-  }
-  let color3 = {
-    h: _.min([_.random(color4.h * .9, color4.h * 1.1, true), 360]),
-    s: _.random(.2, .8, true),
-    l: _.random(.2, .8, true)
-  }
+  let color4 = getRandomColor()
+  color4.h = getRandomHue(complementaryHue, .1)
 
-  let palette = [color1, color2, color3, color4]
-  setSwatches(palette)
+  let color3 = getRandomColor()
+  color3.h = getRandomHue(color4.h, .1)
 
-  return palette
+  return [color1, color2, color3, color4]
 }
 
 function getRandomColor(h) {
   return {
     h: _.random(0, 360),
-    s: _.random(.2, .8, true),
-    l: _.random(.2, .8, true)
+    s: _.floor(_.random(.2, .8, true), 2),
+    l: _.floor(_.random(.2, .8, true), 2),
   }
+}
+
+function getRandomHue(hue, margin) {
+  let randomHue = _.random(hue * (1 - margin), hue * (1 + margin), true)
+  randomHue = _.min([randomHue, 360])
+  return _.floor(randomHue)
 }
 
 function setSwatches(colors) {
   _.forEach(colors, (color, i) => {
-    d3.select(`#square${i + 1}-h`).attr('value', `${color.h}`)
-    d3.select(`#square${i + 1}-s`).attr('value', `${color.s * 100}`)
-    d3.select(`#square${i + 1}-l`).attr('value', `${color.l * 100}`)
-    d3.select(`#square${i + 1}-swatch`).style('background-color', `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`)
+    d3.select(`#square${i + 1}-h`).property('value', `${color.h}`)
+    d3.select(`#square${i + 1}-s`).property('value', `${color.s * 100}`)
+    d3.select(`#square${i + 1}-l`).property('value', `${color.l * 100}`)
+    d3.select(`#square${i + 1}-swatch`).style('background-color',
+      `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`
+    )
   })
 }
 
@@ -106,8 +97,11 @@ homage.squares = homage.canvas.selectAll('rect')
 drawSquares()
 
 function drawSquares() {
+  setSwatches(homage.dataset)
+
   homage.canvas.selectAll('rect')
     .data(homage.dataset)
+
   homage.squares.attr('width', (d, i) => getWidth(i))
     .attr('height', (d, i) => getWidth(i))
     .attr('fill', (d) => `hsl(${d.h}, ${d.s * 100}%, ${d.l * 100}%)`)
@@ -210,5 +204,17 @@ d3.selectAll('.homageType').on('mouseup', () => {
 })
 
 d3.selectAll('.homage-input').on('input', () => {
-  console.log(this)
+  // Get values from input fields
+  let colors = []
+  _.forEach(_.range(1, 5), (index) => {
+    let color = {
+      h: parseFloat(d3.select(`#square${index}-h`).property('value')),
+      s: parseFloat(d3.select(`#square${index}-s`).property('value')) / 100,
+      l: parseFloat(d3.select(`#square${index}-l`).property('value')) / 100,
+    }
+    colors.push(color)
+  })
+
+  homage.dataset = colors
+  drawSquares()
 })
