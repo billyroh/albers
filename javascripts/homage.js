@@ -3,29 +3,88 @@
 
 // Basic variables
 let homage = {
-  maxWidth: 500,
+  maxWidth: d3.select('#homage').node().getBoundingClientRect().width,
   dataset: [],
-  innerColor: {h: 55, s: .92, l: .65},
-  outerColor: {h: 79, s: .58, l: .48},
 }
 
 // Palette
-function generatePalette(iterationCount) {
-  let hIncrement = (homage.innerColor.h - homage.outerColor.h) / (iterationCount - 1)
-  let sIncrement = (homage.innerColor.s - homage.outerColor.s) / (iterationCount - 1)
-  let lIncrement = (homage.innerColor.l - homage.outerColor.l) / (iterationCount - 1)
+homage.dataset = getPalette()
 
-  for (i of Array(iterationCount).keys()) {
-    let color = {
-      h: (homage.outerColor.h + (hIncrement * i)),
-      s: (homage.outerColor.s + (sIncrement * i)),
-      l: (homage.outerColor.l + (lIncrement * i))
-    }
-    homage.dataset.push(color)
+function getPalette() {
+  let type = d3.select('input[name="homageType"]:checked').node().value
+  if (type === 'analagous') {
+    return getAnalagousPalette()
+  } else if (type === 'complementary') {
+    return getComplementaryPalette()
   }
 }
 
-generatePalette(4)
+function getAnalagousPalette() {
+  let color1 = getRandomColor()
+  let color4 = {
+    h: _.min([_.random(color1.h * .7, color1.h * 1.3, true), 360]),
+    s: _.random(.2, .8, true),
+    l: _.random(.2, .8, true),
+  }
+
+  let hIncrement = _.round((color1.h - color4.h) / 3)
+  let sIncrement = (color1.s - color4.s) / 3
+  let lIncrement = (color1.l - color4.l) / 3
+
+  let color2 = {
+    h: (color1.h + hIncrement),
+    s: (color1.s + sIncrement),
+    l: (color1.l + lIncrement)
+  }
+  let color3 = {
+    h: (color1.h + (hIncrement * 2)),
+    s: (color1.s + (sIncrement * 2)),
+    l: (color1.l + (lIncrement * 2))
+  }
+
+  let palette = _.shuffle([color1, color2, color3, color4])
+  setSwatches(palette)
+
+  return palette
+}
+
+function getComplementaryPalette() {
+  let color1 = getRandomColor()
+  let color2 = {
+    h: _.round(color1.h + (color1.h * _.random(-.1, .1, true))),
+    s: _.random(.2, .8, true),
+    l: _.random(.2, .8, true)
+  }
+
+  let color4 = getRandomColor()
+  let color3 = {
+    h: _.round(color4.h + (color4.h * _.random(-.1, .1, true))),
+    s: _.random(.2, .8, true),
+    l: _.random(.2, .8, true)
+  }
+
+  let palette = [color1, color2, color3, color4]
+  setSwatches(palette)
+
+  return palette
+}
+
+function getRandomColor(h) {
+  return {
+    h: _.random(0, 360),
+    s: _.random(.2, .8, true),
+    l: _.random(.2, .8, true)
+  }
+}
+
+function setSwatches(colors) {
+  _.forEach(colors, (color, i) => {
+    d3.select(`#square${i + 1}-h`).attr('value', `${color.h}`)
+    d3.select(`#square${i + 1}-s`).attr('value', `${color.s * 100}`)
+    d3.select(`#square${i + 1}-l`).attr('value', `${color.l * 100}`)
+    d3.select(`#square${i + 1}-swatch`).style('background-color', `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`)
+  })
+}
 
 // d3 setup
 homage.canvas = d3.select('#homage')
@@ -39,9 +98,15 @@ homage.squares = homage.canvas.selectAll('rect')
                   .append('rect')
 
 // Drawing the square
-homage.squares.attr('width', (d, i) => getWidth(i))
-  .attr('height', (d, i) => getWidth(i))
-  .attr('fill', (d) => `hsl(${d.h}, ${d.s * 100}%, ${d.l * 100}%)`)
+drawSquares()
+
+function drawSquares() {
+  homage.canvas.selectAll('rect')
+    .data(homage.dataset)
+  homage.squares.attr('width', (d, i) => getWidth(i))
+    .attr('height', (d, i) => getWidth(i))
+    .attr('fill', (d) => `hsl(${d.h}, ${d.s * 100}%, ${d.l * 100}%)`)
+}
 
 function getWidth(index) {
   let minWidth = homage.maxWidth * 0.4
@@ -127,3 +192,10 @@ function getNewY(i, yCoordinate) {
   let yIncrement = (i / homage.dataset.length) * (homage.maxWidth * 0.2)
   return getInitialY(i) + (homage.cursorScale(yCoordinate) * yIncrement)
 }
+
+// Listeners
+d3.selectAll('.homageType').on('mouseup', () => {
+  console.log('hi')
+  homage.dataset = getPalette()
+  drawSquares()
+})

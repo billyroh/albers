@@ -3,14 +3,16 @@ body {
   padding: 0; }
 
 section {
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
   padding: 40px 20px; }
 
 .canvas {
-  width: 100%;
-  max-width: 500px;
-  height: 500px; }
+  width: 100%; }
+
+section.homage .swatch {
+  width: 20px;
+  height: 20px; }
 
 /*# sourceMappingURL=style.css.map */
