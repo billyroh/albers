@@ -22,7 +22,7 @@ function getPalette() {
 function getAnalagousPalette() {
   let color1 = getRandomColor()
   let color4 = {
-    h: _.min([_.random(color1.h * .7, color1.h * 1.3, true), 360]),
+    h: _.min([_.random(color1.h * .95, color1.h * 1.05, true), 360]),
     s: _.random(.2, .8, true),
     l: _.random(.2, .8, true),
   }
@@ -51,14 +51,19 @@ function getAnalagousPalette() {
 function getComplementaryPalette() {
   let color1 = getRandomColor()
   let color2 = {
-    h: _.round(color1.h + (color1.h * _.random(-.1, .1, true))),
+    h: _.min([_.random(color1.h * .9, color1.h * 1.1, true), 360]),
     s: _.random(.2, .8, true),
     l: _.random(.2, .8, true)
   }
 
-  let color4 = getRandomColor()
+  let complementaryHue = (color1.h + 180) % 360;
+  let color4 = {
+    h: _.min([_.random(complementaryHue * .9, complementaryHue * 1.1, true), 360]),
+    s: _.random(.2, .8, true),
+    l: _.random(.2, .8, true)
+  }
   let color3 = {
-    h: _.round(color4.h + (color4.h * _.random(-.1, .1, true))),
+    h: _.min([_.random(color4.h * .9, color4.h * 1.1, true), 360]),
     s: _.random(.2, .8, true),
     l: _.random(.2, .8, true)
   }
@@ -150,7 +155,6 @@ homage.canvas.on('mousemove', function () {
   }
 
   // TODO (bonus point) add drop shadow when animating
-  // TODO (bonus point) click to change colours and have the squares radiate out
 })
 
 homage.canvas.on('mouseleave', function () {
@@ -162,6 +166,12 @@ homage.canvas.on('mouseleave', function () {
         return `translate(${getInitialX(i)}, ${getInitialY(i)}) rotate(0)`
       })
       .on('end', () => { homage.initialAnimationDidFinish = false})
+})
+
+homage.canvas.on('mouseup', () => {
+  // TODO (bonus point) click to change colours and have the squares radiate out
+  homage.dataset = getPalette()
+  drawSquares()
 })
 
 homage.initialAnimationDidFinish = false
@@ -195,7 +205,10 @@ function getNewY(i, yCoordinate) {
 
 // Listeners
 d3.selectAll('.homageType').on('mouseup', () => {
-  console.log('hi')
   homage.dataset = getPalette()
   drawSquares()
+})
+
+d3.selectAll('.homage-input').on('input', () => {
+  console.log(this)
 })
