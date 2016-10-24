@@ -15,4 +15,8 @@ section.homage .swatch {
   width: 20px;
   height: 20px; }
 
+input[type='number'],
+input[type='text'] {
+  padding: 0.5em; }
+
 /*# sourceMappingURL=style.css.map */
