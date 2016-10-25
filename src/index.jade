@@ -62,13 +62,14 @@ body
               td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-h( type='number' min='0' max='360' )
               td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-s( type='number' min='0' max='100' )
               td.tc.pl2: input.homage-input.ba.b--black-10.br2#square4-l( type='number' min='0' max='100' )
+        button.button( onclick='homage.dataset = getPalette(); drawSquares()' ) Redraw
   section
     .row
       .col-xs-12.col-md-6
-        .canvas#movement
+        .canvas#fox
       .col-xs-12.col-md-6
-        h2 Camino Real
+        h2 Fox II
         h3 Anni Albers
   
   script(src='javascripts/homage.js')
-  script(src='javascripts/movement.js')
+  script(src='javascripts/fox.js')

@@ -198,11 +198,6 @@ function getNewY(i, yCoordinate) {
 }
 
 // Listeners
-d3.selectAll('.homageType').on('mouseup', () => {
-  homage.dataset = getPalette()
-  drawSquares()
-})
-
 d3.selectAll('.homage-input').on('input', () => {
   // Get values from input fields
   let colors = []
