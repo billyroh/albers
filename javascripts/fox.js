@@ -3,18 +3,17 @@
 
 // Basic variables
 let fox = {
-  maxWidth: d3.select('#homage').node().getBoundingClientRect().width,
-  maxHeight: d3.select('#homage').node().getBoundingClientRect().width * 1.5,
+  width: d3.select('#homage').node().getBoundingClientRect().width,
   primaryColor: {h: 16, s: .11, l: .20},
   secondaryColor: {h: 26, s: .36, l: .55},
   backgroundColor: {h: 23, s: .22, l: .93},
   triangleData: [],
 }
 
-fox.triangleHeight = _.floor(fox.maxWidth / 15)
+fox.triangleHeight = _.floor(fox.width / 15)
 
-for (let x = 0; x < ((fox.maxWidth / fox.triangleHeight) + 2); x++) {
-  for (let y = 0; y < ((fox.maxHeight / fox.triangleHeight) + 2); y++) {
+for (let x = 0; x < ((fox.width / fox.triangleHeight) + 2); x++) {
+  for (let y = 0; y < ((fox.width / fox.triangleHeight) + 2); y++) {
     let xCoordinate = x * fox.triangleHeight - (fox.triangleHeight / 2)
     let yCoordinate = y * fox.triangleHeight - (fox.triangleHeight / 2)
     fox.triangleData.push(getPoints(xCoordinate, yCoordinate))
@@ -24,14 +23,14 @@ for (let x = 0; x < ((fox.maxWidth / fox.triangleHeight) + 2); x++) {
 // d3 setup
 fox.canvas = d3.select('#fox')
                   .append('svg')
-                  .attr('width', fox.maxWidth)
-                  .attr('height', fox.maxHeight)
+                  .attr('width', fox.width)
+                  .attr('height', fox.width)
                   .style('background-color', getHsl(fox.backgroundColor))
 
 fox.trianglesSecondary = fox.canvas.selectAll('polygon.secondary')
-                  .data(fox.triangleData)
-                  .enter()
-                  .append('polygon')
+                          .data(fox.triangleData)
+                          .enter()
+                          .append('polygon')
 
 fox.trianglesPrimary = fox.canvas.selectAll('polygon.primary')
                   .data(fox.triangleData)
@@ -46,12 +45,13 @@ fox.trianglesSecondary.attr('points', (d) => d)
 fox.trianglesPrimary.attr('points', (d) => getOffset(d))
   .attr('fill', (d) => getHsl(fox.primaryColor))
   .attr('class', 'primary')
+  .attr('opacity', .925)
 
 function getPoints(x, y) {
   let random = _.random(3)
   let point1, point2, point3
-  let xAdjusted = x - (fox.triangleHeight / 2)
-  let yAdjusted = y - (fox.triangleHeight / 2)
+  let xAdjusted = x - _.floor(fox.triangleHeight / 2)
+  let yAdjusted = y - _.floor(fox.triangleHeight / 2)
 
   if (random === 0) {
     point1 = `${xAdjusted}, ${yAdjusted}`
@@ -79,10 +79,10 @@ function getOffset(points) {
   _.forEach(pointsArray, (point, index) => {
     pointsArray[index] = parseFloat(pointsArray[index])
   })
-  let halfHeight = (fox.triangleHeight / 2)
-  let point1 = `${pointsArray[0] - halfHeight}, ${pointsArray[1] - halfHeight}`
-  let point2 = `${pointsArray[2] - halfHeight}, ${pointsArray[3] - halfHeight}`
-  let point3 = `${pointsArray[4] - halfHeight}, ${pointsArray[5] - halfHeight}`
+  let halfHeight = _.floor(fox.triangleHeight / 3.5)
+  let point1 = `${pointsArray[0] + halfHeight}, ${pointsArray[1] - halfHeight}`
+  let point2 = `${pointsArray[2] + halfHeight}, ${pointsArray[3] - halfHeight}`
+  let point3 = `${pointsArray[4] + halfHeight}, ${pointsArray[5] - halfHeight}`
 
   return `${point1}, ${point2}, ${point3}`
 }
