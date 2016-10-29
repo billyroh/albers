@@ -3,7 +3,7 @@
 
 // Basic variables
 let homage = {
-  maxWidth: d3.select('#homage').node().getBoundingClientRect().width,
+  width: d3.select('#homage').node().getBoundingClientRect().width,
   dataset: [],
 }
 
@@ -85,8 +85,8 @@ function setSwatches(colors) {
 // d3 setup
 homage.canvas = d3.select('#homage')
                   .append('svg')
-                  .attr('width', homage.maxWidth)
-                  .attr('height', homage.maxWidth)
+                  .attr('width', homage.width)
+                  .attr('height', homage.width)
 
 homage.squares = homage.canvas.selectAll('rect')
                   .data(homage.dataset)
@@ -108,9 +108,9 @@ function drawSquares() {
 }
 
 function getWidth(index) {
-  let minWidth = homage.maxWidth * 0.4
-  let increment = (homage.maxWidth - minWidth) / (homage.dataset.length - 1)
-  return homage.maxWidth - (increment * index)
+  let minWidth = homage.width * 0.4
+  let increment = (homage.width - minWidth) / (homage.dataset.length - 1)
+  return homage.width - (increment * index)
 }
 
 setCoordinates()
@@ -122,12 +122,12 @@ function setCoordinates() {
 }
 
 function getInitialX(index) {
-  return (homage.maxWidth - getWidth(index)) / 2
+  return (homage.width - getWidth(index)) / 2
 }
 
 function getInitialY(index) {
-  let increment = homage.maxWidth * 0.05
-  return homage.maxWidth - getWidth(index) - (increment * index)
+  let increment = homage.width * 0.05
+  return homage.width - getWidth(index) - (increment * index)
 }
 
 // Interaction
@@ -171,7 +171,7 @@ homage.canvas.on('mouseup', () => {
 homage.initialAnimationDidFinish = false
 
 homage.cursorScale = d3.scaleLinear()
-  .domain([0, homage.maxWidth])
+  .domain([0, homage.width])
   .range([-1, 1])
   .clamp(true)
 
@@ -188,12 +188,12 @@ function getNewRotation(i, xCoordinate) {
 }
 
 function getNewX(i, xCoordinate) {
-  let xIncrement = (i / homage.dataset.length) * (homage.maxWidth * 0.2)
+  let xIncrement = (i / homage.dataset.length) * (homage.width * 0.2)
   return getInitialX(i) + (homage.cursorScale(xCoordinate) * xIncrement)
 }
 
 function getNewY(i, yCoordinate) {
-  let yIncrement = (i / homage.dataset.length) * (homage.maxWidth * 0.2)
+  let yIncrement = (i / homage.dataset.length) * (homage.width * 0.2)
   return getInitialY(i) + (homage.cursorScale(yCoordinate) * yIncrement)
 }
 

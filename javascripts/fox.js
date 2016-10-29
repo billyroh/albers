@@ -26,44 +26,49 @@ fox.canvas = d3.select('#fox')
                   .append('svg')
                   .attr('width', fox.maxWidth)
                   .attr('height', fox.maxHeight)
-                  .attr('fill', fox.backgroundColor)
+                  .style('background-color', getHsl(fox.backgroundColor))
 
-fox.triangles = fox.canvas.selectAll('polygon')
+fox.trianglesSecondary = fox.canvas.selectAll('polygon.secondary')
+                  .data(fox.triangleData)
+                  .enter()
+                  .append('polygon')
+
+fox.trianglesPrimary = fox.canvas.selectAll('polygon.primary')
                   .data(fox.triangleData)
                   .enter()
                   .append('polygon')
 
 // Drawing the content
-fox.triangles.attr('points', (d) => d)
-  .attr('fill', fox.secondaryColor)
+fox.trianglesSecondary.attr('points', (d) => d)
+  .attr('fill', (d) => getHsl(fox.secondaryColor))
   .attr('class', 'secondary')
 
-fox.triangles.attr('points', (d) => getOffset(d))
-  .attr('fill', fox.primaryColor)
+fox.trianglesPrimary.attr('points', (d) => getOffset(d))
+  .attr('fill', (d) => getHsl(fox.primaryColor))
   .attr('class', 'primary')
 
 function getPoints(x, y) {
-  let random = _.random(4)
+  let random = _.random(3)
   let point1, point2, point3
-  let xPosition = fox.triangleHeight * (x - 1)
-  let yPosition = fox.triangleHeight * (y - 1)
+  let xAdjusted = x - (fox.triangleHeight / 2)
+  let yAdjusted = y - (fox.triangleHeight / 2)
 
   if (random === 0) {
-    point1 = `${x}, ${y}`
-    point2 = `${fox.triangleHeight + x}, ${y}`
-    point3 = `${x}, ${fox.triangleHeight + y}`
+    point1 = `${xAdjusted}, ${yAdjusted}`
+    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
   } else if (random === 1) {
-    point1 = `${x}, ${y}`
-    point2 = `${fox.triangleHeight + x}, ${y}`
-    point3 = `${x}, ${fox.triangleHeight + y}`
+    point1 = `${xAdjusted}, ${yAdjusted}`
+    point2 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
+    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
   } else if (random === 2) {
-    point1 = `${x}, ${y}`
-    point2 = `${fox.triangleHeight + x}, ${fox.triangleHeight + y}`
-    point3 = `${fox.triangleHeight + x}, ${y}`
+    point1 = `${xAdjusted}, ${yAdjusted}`
+    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point3 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
   } else if (random === 3) {
-    point1 = `${fox.triangleHeight + x}, ${y}`
-    point2 = `${fox.triangleHeight + x}, ${fox.triangleHeight + y}`
-    point3 = `${x}, ${fox.triangleHeight + y}`
+    point1 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
+    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
   }
 
   return `${point1}, ${point2}, ${point3}`
@@ -75,11 +80,13 @@ function getOffset(points) {
     pointsArray[index] = parseFloat(pointsArray[index])
   })
   let halfHeight = (fox.triangleHeight / 2)
-  let point1 = `${pointsArray[0] - halfHeight}, ${pointsArray[1] + halfHeight}`
-  let point2 = `${pointsArray[2] - halfHeight}, ${pointsArray[3] + halfHeight}`
-  let point3 = `${pointsArray[4] - halfHeight}, ${pointsArray[5] + halfHeight}`
-
-  // TODO fix this NaN issue
+  let point1 = `${pointsArray[0] - halfHeight}, ${pointsArray[1] - halfHeight}`
+  let point2 = `${pointsArray[2] - halfHeight}, ${pointsArray[3] - halfHeight}`
+  let point3 = `${pointsArray[4] - halfHeight}, ${pointsArray[5] - halfHeight}`
 
   return `${point1}, ${point2}, ${point3}`
+}
+
+function getHsl(color) {
+  return `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`
 }
