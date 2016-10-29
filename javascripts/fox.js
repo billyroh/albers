@@ -10,7 +10,13 @@ let fox = {
   triangleData: [],
 }
 
-fox.triangleHeight = _.floor(fox.width / 15)
+fox.triangleHeight = _.floor(fox.width / 30)
+fox.padding = _.floor(fox.width * .12)
+fox.gutter = _.floor(fox.width * .06)
+fox.diptych = {
+  width: _.floor(fox.width * .35),
+  height: _.floor(fox.width * .76),
+}
 
 for (let x = 0; x < ((fox.width / fox.triangleHeight) + 2); x++) {
   for (let y = 0; y < ((fox.width / fox.triangleHeight) + 2); y++) {
@@ -27,6 +33,22 @@ fox.canvas = d3.select('#fox')
                   .attr('height', fox.width)
                   .style('background-color', getHsl(fox.backgroundColor))
 
+fox.diptychLeft = fox.canvas.append("clipPath")
+      .attr("id", "diptych-left")
+    .append("rect")
+      .attr("x", fox.padding)
+      .attr("y", fox.padding)
+      .attr("width", fox.diptych.width)
+      .attr("height", fox.diptych.height)
+
+fox.diptychLeft = fox.canvas.append("clipPath")
+      .attr("id", "diptych-right")
+    .append("rect")
+      .attr("x", fox.width - fox.padding - fox.diptych.width)
+      .attr("y", fox.padding)
+      .attr("width", fox.diptych.width)
+      .attr("height", fox.diptych.height)
+
 fox.trianglesSecondary = fox.canvas.selectAll('polygon.secondary')
                           .data(fox.triangleData)
                           .enter()
@@ -37,15 +59,38 @@ fox.trianglesPrimary = fox.canvas.selectAll('polygon.primary')
                   .enter()
                   .append('polygon')
 
+fox.trianglesSecondary2 = fox.canvas.selectAll('polygon.secondary')
+                          .data(fox.triangleData)
+                          .enter()
+                          .append('polygon')
+
+fox.trianglesPrimary2 = fox.canvas.selectAll('polygon.primary')
+                  .data(fox.triangleData)
+                  .enter()
+                  .append('polygon')
+
 // Drawing the content
 fox.trianglesSecondary.attr('points', (d) => d)
   .attr('fill', (d) => getHsl(fox.secondaryColor))
   .attr('class', 'secondary')
+  .attr('clip-path', 'url(#diptych-left)')
 
 fox.trianglesPrimary.attr('points', (d) => getOffset(d))
   .attr('fill', (d) => getHsl(fox.primaryColor))
   .attr('class', 'primary')
   .attr('opacity', .925)
+  .attr('clip-path', 'url(#diptych-left)')
+
+fox.trianglesSecondary2.attr('points', (d) => d)
+  .attr('fill', (d) => getHsl(fox.secondaryColor))
+  .attr('class', 'secondary')
+  .attr('clip-path', 'url(#diptych-right)')
+
+fox.trianglesPrimary2.attr('points', (d) => getOffset(d))
+  .attr('fill', (d) => getHsl(fox.primaryColor))
+  .attr('class', 'primary')
+  .attr('opacity', .925)
+  .attr('clip-path', 'url(#diptych-right)')
 
 function getPoints(x, y) {
   let random = _.random(3)
