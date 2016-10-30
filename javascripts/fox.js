@@ -31,7 +31,7 @@ function getAnalagousFoxPalette() {
   let color1 = {
     h: _.random(0, 360),
     s: _.floor(_.random(.2, .3, true), 2),
-    l: _.floor(_.random(.7, .9, true), 2),
+    l: _.floor(_.random(.9, .98, true), 2),
   }
 
   let color2 = {
@@ -43,7 +43,7 @@ function getAnalagousFoxPalette() {
   let color3 = {
     h: getRandomHue(color1.h, .1),
     s: _.floor((color1.s + color2.s) / 2, 2),
-    l: _.floor(_.random(.1, .3, true), 2),
+    l: _.floor(_.random(.1, .2, true), 2),
   }
 
   return [color1, color2, color3]
@@ -181,57 +181,63 @@ function getOffset(points) {
 
 function drawTriangles() {
   // Reset
-  fox.canvas.selectAll('polygon.secondary').remove()
-  fox.canvas.selectAll('polygon.primary').remove()
+  fox.canvas.selectAll('g.secondary > polygon').remove()
+  fox.canvas.selectAll('g.primary > polygon').remove()
 
-  // Redraw
+  // Draw background
   fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
+  //// Draw left diptych
   fox.diptychLeft.trianglesSecondary =
-    fox.canvas.selectAll('polygon.secondary')
-      .data(fox.coordinates.secondary)
-      .enter()
-      .append('polygon')
+    fox.canvas.append('g')
+      .attr('class', 'secondary left')
+      .attr('clip-path', 'url(#diptych-left)')
+
+  fox.diptychLeft.trianglesSecondary.selectAll('polygon')
+    .data(fox.coordinates.secondary)
+    .enter()
+    .append('polygon')
+      .attr('points', (d) => d)
+      .attr('fill', (d) => getHsl(fox.palette[1]))
 
   fox.diptychLeft.trianglesPrimary =
-    fox.canvas.selectAll('polygon.primary')
-      .data(fox.coordinates.primary)
-      .enter()
-      .append('polygon')
+    fox.canvas.append('g')
+      .attr('class', 'primary left')
+      .attr('clip-path', 'url(#diptych-left)')
 
+  fox.diptychLeft.trianglesPrimary.selectAll('polygon')
+    .data(fox.coordinates.primary)
+    .enter()
+    .append('polygon')
+      .attr('points', (d) => d)
+      .attr('fill', (d) => getHsl(fox.palette[2]))
+      .attr('opacity', .9)
+
+  //// Draw right diptych
   fox.diptychRight.trianglesSecondary =
-    fox.canvas.selectAll('polygon.secondary')
-      .data(fox.coordinates.secondary)
-      .enter()
-      .append('polygon')
+    fox.canvas.append('g')
+      .attr('class', 'secondary right')
+
+  fox.diptychRight.trianglesSecondary.selectAll('polygon')
+    .data(fox.coordinates.secondary)
+    .enter()
+    .append('polygon')
+      .attr('points', (d) => d)
+      .attr('fill', (d) => getHsl(fox.palette[1]))
+      .attr('clip-path', 'url(#diptych-right)')
 
   fox.diptychRight.trianglesPrimary =
-    fox.canvas.selectAll('polygon.primary')
-      .data(fox.coordinates.primary)
-      .enter()
-      .append('polygon')
+    fox.canvas.append('g')
+      .attr('class', 'primary right')
 
-  fox.diptychLeft.trianglesSecondary.attr('points', (d) => d)
-    .attr('fill', (d) => getHsl(fox.palette[1]))
-    .attr('class', 'secondary')
-    .attr('clip-path', 'url(#diptych-left)')
-
-  fox.diptychLeft.trianglesPrimary.attr('points', (d) => d)
-    .attr('fill', (d) => getHsl(fox.palette[2]))
-    .attr('class', 'primary')
-    .attr('opacity', .9)
-    .attr('clip-path', 'url(#diptych-left)')
-
-  fox.diptychRight.trianglesSecondary.attr('points', (d) => d)
-    .attr('fill', (d) => getHsl(fox.palette[1]))
-    .attr('class', 'secondary')
-    .attr('clip-path', 'url(#diptych-right)')
-
-  fox.diptychRight.trianglesPrimary.attr('points', (d) => d)
-    .attr('fill', (d) => getHsl(fox.palette[2]))
-    .attr('class', 'primary')
-    .attr('opacity', .9)
-    .attr('clip-path', 'url(#diptych-right)')
+  fox.diptychRight.trianglesPrimary.selectAll('polygon')
+    .data(fox.coordinates.primary)
+    .enter()
+    .append('polygon')
+      .attr('points', (d) => d)
+      .attr('fill', (d) => getHsl(fox.palette[2]))
+      .attr('opacity', .9)
+      .attr('clip-path', 'url(#diptych-right)')
 }
 
 // Interaction
@@ -241,23 +247,34 @@ fox.canvas.on('mouseup', () => {
 
 fox.initialAnimationDidFinish = false
 
-fox.canvas.on('move', function () {
+fox.cursorScale = d3.scaleLinear()
+  .domain([0, fox.width])
+  .range([-1, 1])
+  .clamp(true)
+
+fox.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
 
-  // Use a transition for the initial animation
-  if (!fox.initialAnimationDidFinish) {
-    // fox.canvas.selectAll('polygon.secondary')
-    //   .interrupt()
-    //   .transition(d3.easeBounce)
-    //     .duration(75)
-    //     .attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
-    //     .on('end', () => { fox.initialAnimationDidFinish = true})
-  // Once the initial animation is finished, track the cursor linearly
-  } else {
-    // fox.squares.attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
-  }
+  let xIncrement = -fox.cursorScale(xCoordinate) * (fox.triangleHeight / 2)
+  let yIncrement = -fox.cursorScale(yCoordinate) * (fox.triangleHeight / 2)
+
+  fox.diptychLeft.trianglesSecondary.attr('transform', (d, i) => {
+    return `translate(${xIncrement}, ${yIncrement})`
+  })
 })
+
+function getShadow(points, xCoordinate, yCoordinate) {
+  let pointsArray = points.split(',')
+  _.forEach(pointsArray, (point, index) => {
+    pointsArray[index] = parseFloat(pointsArray[index])
+  })
+  let point1 = `${pointsArray[0] - xCoordinate}, ${pointsArray[1] + yCoordinate}`
+  let point2 = `${pointsArray[2] - xCoordinate}, ${pointsArray[3] + yCoordinate}`
+  let point3 = `${pointsArray[4] - xCoordinate}, ${pointsArray[5] + yCoordinate}`
+
+  return `${point1}, ${point2}, ${point3}`
+}
 
 function redrawFox() {
   fox.palette = getFoxPalette()
