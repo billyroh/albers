@@ -112,9 +112,11 @@ fox.diptychRight =
       .attr("height", fox.diptych.height)
 
 // Generate dataset
-fox.dataset = getTriangleData()
+fox.coordinates = {}
+fox.coordinates.primary = getPrimaryCoordinates()
+fox.coordinates.secondary = getSecondaryCoordinates(fox.coordinates.primary)
 
-function getTriangleData() {
+function getPrimaryCoordinates() {
   let dataset = []
   for (let x = 0; x < ((fox.width / fox.triangleHeight) + 2); x++) {
     for (let y = 0; y < ((fox.width / fox.triangleHeight) + 2); y++) {
@@ -123,6 +125,14 @@ function getTriangleData() {
       dataset.push(getPoints(xCoordinate, yCoordinate))
     }
   }
+  return dataset
+}
+
+function getSecondaryCoordinates(primary) {
+  let dataset = primary.slice()
+  _.forEach(dataset, (point, index) => {
+    dataset[index] = getOffset(point)
+  })
   return dataset
 }
 
@@ -162,9 +172,9 @@ function getOffset(points) {
     pointsArray[index] = parseFloat(pointsArray[index])
   })
   let halfHeight = _.floor(fox.triangleHeight / 3.5)
-  let point1 = `${pointsArray[0] + halfHeight}, ${pointsArray[1] - halfHeight}`
-  let point2 = `${pointsArray[2] + halfHeight}, ${pointsArray[3] - halfHeight}`
-  let point3 = `${pointsArray[4] + halfHeight}, ${pointsArray[5] - halfHeight}`
+  let point1 = `${pointsArray[0] - halfHeight}, ${pointsArray[1] + halfHeight}`
+  let point2 = `${pointsArray[2] - halfHeight}, ${pointsArray[3] + halfHeight}`
+  let point3 = `${pointsArray[4] - halfHeight}, ${pointsArray[5] + halfHeight}`
 
   return `${point1}, ${point2}, ${point3}`
 }
@@ -179,25 +189,25 @@ function drawTriangles() {
 
   fox.diptychLeft.trianglesSecondary =
     fox.canvas.selectAll('polygon.secondary')
-      .data(fox.dataset)
+      .data(fox.coordinates.secondary)
       .enter()
       .append('polygon')
 
   fox.diptychLeft.trianglesPrimary =
     fox.canvas.selectAll('polygon.primary')
-      .data(fox.dataset)
+      .data(fox.coordinates.primary)
       .enter()
       .append('polygon')
 
   fox.diptychRight.trianglesSecondary =
     fox.canvas.selectAll('polygon.secondary')
-      .data(fox.dataset)
+      .data(fox.coordinates.secondary)
       .enter()
       .append('polygon')
 
   fox.diptychRight.trianglesPrimary =
     fox.canvas.selectAll('polygon.primary')
-      .data(fox.dataset)
+      .data(fox.coordinates.primary)
       .enter()
       .append('polygon')
 
@@ -206,7 +216,7 @@ function drawTriangles() {
     .attr('class', 'secondary')
     .attr('clip-path', 'url(#diptych-left)')
 
-  fox.diptychLeft.trianglesPrimary.attr('points', (d) => getOffset(d))
+  fox.diptychLeft.trianglesPrimary.attr('points', (d) => d)
     .attr('fill', (d) => getHsl(fox.palette[2]))
     .attr('class', 'primary')
     .attr('opacity', .9)
@@ -217,7 +227,7 @@ function drawTriangles() {
     .attr('class', 'secondary')
     .attr('clip-path', 'url(#diptych-right)')
 
-  fox.diptychRight.trianglesPrimary.attr('points', (d) => getOffset(d))
+  fox.diptychRight.trianglesPrimary.attr('points', (d) => d)
     .attr('fill', (d) => getHsl(fox.palette[2]))
     .attr('class', 'primary')
     .attr('opacity', .9)
@@ -228,9 +238,31 @@ function drawTriangles() {
 fox.canvas.on('mouseup', () => {
   redrawFox()
 })
+
+fox.initialAnimationDidFinish = false
+
+fox.canvas.on('move', function () {
+  let xCoordinate = d3.mouse(this)[0]
+  let yCoordinate = d3.mouse(this)[1]
+
+  // Use a transition for the initial animation
+  if (!fox.initialAnimationDidFinish) {
+    // fox.canvas.selectAll('polygon.secondary')
+    //   .interrupt()
+    //   .transition(d3.easeBounce)
+    //     .duration(75)
+    //     .attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
+    //     .on('end', () => { fox.initialAnimationDidFinish = true})
+  // Once the initial animation is finished, track the cursor linearly
+  } else {
+    // fox.squares.attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
+  }
+})
+
 function redrawFox() {
   fox.palette = getFoxPalette()
-  fox.dataset = getTriangleData()
+  fox.coordinates.primary = getPrimaryCoordinates()
+  fox.coordinates.secondary = getSecondaryCoordinates(fox.coordinates.primary)
   drawTriangles()
   setFoxSwatches(fox.palette)
 }

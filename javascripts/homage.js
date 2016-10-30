@@ -133,6 +133,8 @@ function getInitialY(index) {
 }
 
 // Interaction
+homage.initialAnimationDidFinish = false
+
 homage.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
@@ -169,8 +171,6 @@ homage.canvas.on('mouseup', () => {
   homage.dataset = getHomagePalette()
   drawSquares()
 })
-
-homage.initialAnimationDidFinish = false
 
 homage.cursorScale = d3.scaleLinear()
   .domain([0, homage.width])
