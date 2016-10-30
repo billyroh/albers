@@ -62,7 +62,7 @@ body
               td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-h( type='number' min='0' max='360' )
               td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-s( type='number' min='0' max='100' )
               td.tc.pl2: input.homage-input.ba.b--black-10.br2#square4-l( type='number' min='0' max='100' )
-        button.button( onclick='homage.dataset = getPalette(); drawSquares()' ) Redraw
+        button.button( onclick='homage.dataset = getHomagePalette(); drawSquares()' ) Redraw
   section
     .row
       .col-xs-12.col-md-6
@@ -70,6 +70,44 @@ body
       .col-xs-12.col-md-6
         h2 Fox II
         h3 Anni Albers
-  
+        .row: .col-xs-12
+          label.homageType.fl.mr4
+            input(
+              type='radio'
+              name='foxType'
+              value='analagous'
+              checked='checked'
+            )
+            span.pl2 Analagous
+          label.homageType.fl
+            input.pr4(
+              type='radio'
+              name='foxType'
+              value='complementary'
+            )
+            span.pl2 Complementary
+        table
+          tbody
+            tr
+              th
+              th.tc H
+              th.tc S
+              th.tc L
+            tr
+              td.tr.pr2: .swatch.ba.b--black-10.br2#fox1-swatch
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox1-h( type='number' min='0' max='360' )
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox1-s( type='number' min='0' max='100' )
+              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox1-l( type='number' min='0' max='100' )
+            tr
+              td.tr.pr2: .swatch.ba.b--black-10.br2#fox2-swatch
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox2-h( type='number' min='0' max='360' )
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox2-s( type='number' min='0' max='100' )
+              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox2-l( type='number' min='0' max='100' )
+            tr
+              td.tr.pr2: .swatch.ba.b--black-10.br2#fox3-swatch
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox3-h( type='number' min='0' max='360' )
+              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox3-s( type='number' min='0' max='100' )
+              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox3-l( type='number' min='0' max='100' )
+        button.button( onclick='redrawFox()' ) Redraw
   script(src='javascripts/homage.js')
   script(src='javascripts/fox.js')

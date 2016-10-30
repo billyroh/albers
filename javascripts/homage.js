@@ -8,18 +8,18 @@ let homage = {
 }
 
 // Palette
-homage.dataset = getPalette()
+homage.dataset = getHomagePalette()
 
-function getPalette() {
+function getHomagePalette() {
   let type = d3.select('input[name="homageType"]:checked').node().value
   if (type === 'analagous') {
-    return getAnalagousPalette()
+    return getAnalagousHomagePalette()
   } else if (type === 'complementary') {
-    return getComplementaryPalette()
+    return getComplementaryHomagePalette()
   }
 }
 
-function getAnalagousPalette() {
+function getAnalagousHomagePalette() {
   let color1 = getRandomColor()
   let color4 = getRandomColor()
   color4.h = getRandomHue(color1.h, .1)
@@ -42,7 +42,7 @@ function getAnalagousPalette() {
   return _.shuffle([color1, color2, color3, color4])
 }
 
-function getComplementaryPalette() {
+function getComplementaryHomagePalette() {
   let color1 = getRandomColor()
   let color2 = getRandomColor()
   color2.h = getRandomHue(color1.h, .1)
@@ -57,7 +57,7 @@ function getComplementaryPalette() {
   return [color1, color2, color3, color4]
 }
 
-function getRandomColor(h) {
+function getRandomColor() {
   return {
     h: _.random(0, 360),
     s: _.floor(_.random(.2, .8, true), 2),
@@ -71,15 +71,17 @@ function getRandomHue(hue, margin) {
   return _.floor(randomHue)
 }
 
-function setSwatches(colors) {
+function setHomageSwatches(colors) {
   _.forEach(colors, (color, i) => {
     d3.select(`#square${i + 1}-h`).property('value', `${color.h}`)
     d3.select(`#square${i + 1}-s`).property('value', `${color.s * 100}`)
     d3.select(`#square${i + 1}-l`).property('value', `${color.l * 100}`)
-    d3.select(`#square${i + 1}-swatch`).style('background-color',
-      `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`
-    )
+    d3.select(`#square${i + 1}-swatch`).style('background-color', getHsl(color))
   })
+}
+
+function getHsl(color) {
+  return `hsl(${color.h}, ${color.s * 100}%, ${color.l * 100}%)`
 }
 
 // d3 setup
@@ -97,14 +99,14 @@ homage.squares = homage.canvas.selectAll('rect')
 drawSquares()
 
 function drawSquares() {
-  setSwatches(homage.dataset)
+  setHomageSwatches(homage.dataset)
 
   homage.canvas.selectAll('rect')
     .data(homage.dataset)
 
   homage.squares.attr('width', (d, i) => getWidth(i))
     .attr('height', (d, i) => getWidth(i))
-    .attr('fill', (d) => `hsl(${d.h}, ${d.s * 100}%, ${d.l * 100}%)`)
+    .attr('fill', (d) => getHsl(d))
 }
 
 function getWidth(index) {
@@ -164,7 +166,7 @@ homage.canvas.on('mouseleave', function () {
 
 homage.canvas.on('mouseup', () => {
   // TODO (bonus point) click to change colours and have the squares radiate out
-  homage.dataset = getPalette()
+  homage.dataset = getHomagePalette()
   drawSquares()
 })
 
