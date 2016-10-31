@@ -187,25 +187,23 @@ function drawTriangles() {
   // Draw background
   fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
-  //// Draw left diptych
-  fox.diptychLeft.trianglesSecondary =
+  // Draw triangles
+  fox.trianglesSecondary =
     fox.canvas.append('g')
-      .attr('class', 'secondary left')
-      .attr('clip-path', 'url(#diptych-left)')
+      .attr('class', 'secondary')
 
-  fox.diptychLeft.trianglesSecondary.selectAll('polygon')
+  fox.trianglesSecondary.selectAll('polygon')
     .data(fox.coordinates.secondary)
     .enter()
     .append('polygon')
       .attr('points', (d) => d)
       .attr('fill', (d) => getHsl(fox.palette[1]))
 
-  fox.diptychLeft.trianglesPrimary =
+  fox.trianglesPrimary =
     fox.canvas.append('g')
-      .attr('class', 'primary left')
-      .attr('clip-path', 'url(#diptych-left)')
+      .attr('class', 'primary')
 
-  fox.diptychLeft.trianglesPrimary.selectAll('polygon')
+  fox.trianglesPrimary.selectAll('polygon')
     .data(fox.coordinates.primary)
     .enter()
     .append('polygon')
@@ -213,31 +211,47 @@ function drawTriangles() {
       .attr('fill', (d) => getHsl(fox.palette[2]))
       .attr('opacity', .9)
 
-  //// Draw right diptych
-  fox.diptychRight.trianglesSecondary =
+  // Draw covers
+  fox.covers =
     fox.canvas.append('g')
-      .attr('class', 'secondary right')
+      .attr('class', 'secondary')
 
-  fox.diptychRight.trianglesSecondary.selectAll('polygon')
-    .data(fox.coordinates.secondary)
-    .enter()
-    .append('polygon')
-      .attr('points', (d) => d)
-      .attr('fill', (d) => getHsl(fox.palette[1]))
-      .attr('clip-path', 'url(#diptych-right)')
+  let wiggleRoom = fox.width * .1
 
-  fox.diptychRight.trianglesPrimary =
-    fox.canvas.append('g')
-      .attr('class', 'primary right')
+  fox.covers.append('rect')
+    .attr('width', fox.width + (2 * wiggleRoom))
+    .attr('height', fox.padding + wiggleRoom)
+    .attr('x', -wiggleRoom)
+    .attr('y', -wiggleRoom)
+    .attr('fill', (d) => getHsl(fox.palette[0]))
 
-  fox.diptychRight.trianglesPrimary.selectAll('polygon')
-    .data(fox.coordinates.primary)
-    .enter()
-    .append('polygon')
-      .attr('points', (d) => d)
-      .attr('fill', (d) => getHsl(fox.palette[2]))
-      .attr('opacity', .9)
-      .attr('clip-path', 'url(#diptych-right)')
+  fox.covers.append('rect')
+    .attr('width', fox.width + (2 * wiggleRoom))
+    .attr('height', fox.padding + wiggleRoom)
+    .attr('x', -wiggleRoom)
+    .attr('y', fox.width - fox.padding)
+    .attr('fill', (d) => getHsl(fox.palette[0]))
+
+  fox.covers.append('rect')
+    .attr('width', fox.padding + wiggleRoom)
+    .attr('height', fox.width + (2 * wiggleRoom))
+    .attr('x', -wiggleRoom)
+    .attr('y', -wiggleRoom)
+    .attr('fill', (d) => getHsl(fox.palette[0]))
+
+  fox.covers.append('rect')
+    .attr('width', fox.padding + wiggleRoom)
+    .attr('height', fox.width + (2 * wiggleRoom))
+    .attr('x', fox.width - fox.padding)
+    .attr('y', -wiggleRoom)
+    .attr('fill', (d) => getHsl(fox.palette[0]))
+
+  fox.covers.append('rect')
+    .attr('width', fox.gutter)
+    .attr('height', fox.width + (2 * wiggleRoom))
+    .attr('x', fox.padding + fox.diptych.width)
+    .attr('y', -wiggleRoom)
+    .attr('fill', (d) => getHsl(fox.palette[0]))
 }
 
 // Interaction
@@ -256,25 +270,50 @@ fox.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
 
-  let xIncrement = -fox.cursorScale(xCoordinate) * (fox.triangleHeight / 2)
-  let yIncrement = -fox.cursorScale(yCoordinate) * (fox.triangleHeight / 2)
+  if (!fox.initialAnimationDidFinish) {
+    fox.trianglesSecondary
+      .interrupt()
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('transform', (d, i) => {
+          let xIncrement = _.floor(-fox.cursorScale(xCoordinate) * (fox.triangleHeight / 4))
+          let yIncrement = _.floor(-fox.cursorScale(yCoordinate) * (fox.triangleHeight / 4))
+          return `translate(${xIncrement}, ${yIncrement})`
+        })
+    fox.covers
+      .interrupt()
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('transform', (d, i) => {
+          let xIncrement = fox.cursorScale(xCoordinate) * fox.triangleHeight
+          let yIncrement = fox.cursorScale(yCoordinate) * fox.triangleHeight
+          return `translate(${xIncrement}, ${yIncrement})`
+        })
+        .on('end', () => { fox.initialAnimationDidFinish = true})
+  } else {
+    fox.trianglesSecondary.attr('transform', (d, i) => {
+      let xIncrement = _.floor(-fox.cursorScale(xCoordinate) * (fox.triangleHeight / 4))
+      let yIncrement = _.floor(-fox.cursorScale(yCoordinate) * (fox.triangleHeight / 4))
+      return `translate(${xIncrement}, ${yIncrement})`
+    })
 
-  fox.diptychLeft.trianglesSecondary.attr('transform', (d, i) => {
-    return `translate(${xIncrement}, ${yIncrement})`
-  })
+    fox.covers.attr('transform', (d, i) => {
+      let xIncrement = fox.cursorScale(xCoordinate) * fox.triangleHeight
+      let yIncrement = fox.cursorScale(yCoordinate) * fox.triangleHeight
+      return `translate(${xIncrement}, ${yIncrement})`
+    })
+  }
 })
 
-function getShadow(points, xCoordinate, yCoordinate) {
-  let pointsArray = points.split(',')
-  _.forEach(pointsArray, (point, index) => {
-    pointsArray[index] = parseFloat(pointsArray[index])
-  })
-  let point1 = `${pointsArray[0] - xCoordinate}, ${pointsArray[1] + yCoordinate}`
-  let point2 = `${pointsArray[2] - xCoordinate}, ${pointsArray[3] + yCoordinate}`
-  let point3 = `${pointsArray[4] - xCoordinate}, ${pointsArray[5] + yCoordinate}`
-
-  return `${point1}, ${point2}, ${point3}`
-}
+fox.canvas.on('mouseleave', function () {
+  fox.trianglesSecondary.transition(d3.easeElasticInOut)
+    .duration(250)
+    .attr('transform', (d) => `translate(0, 0)`)
+  fox.covers.transition(d3.easeElasticInOut)
+    .duration(250)
+    .attr('transform', (d) => `translate(0, 0)`)
+    .on('end', () => { fox.initialAnimationDidFinish = false})
+})
 
 function redrawFox() {
   fox.palette = getFoxPalette()
