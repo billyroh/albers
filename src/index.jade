@@ -11,14 +11,15 @@ head
   script(src='node_modules/d3-transition/build/d3-transition.min.js')
   script(src='node_modules/d3-scale/build/d3-scale.min.js')
 body
-  section.intro: .row.pt4
-    .col-xs-12.col-md-9
-      h2 Albers as a Millenial
-      hr
-      h1 A series of generative images based on the works of Josef and Anni Albers.
-      .button-group.mt5
-        a.button( href='https://github.com/billyroh/albers' ) View Source
-        a.button.ml3( href='https://github.com/billyroh/albers' ) Read Article
+  section.intro
+    h2 Albers as a Millenial
+    hr
+    .row.pt5
+      .col-xs-12.col-md-9
+        h1 A series of generative images based on the works of Josef and Anni Albers.
+        .button-group.mt5
+          a.button( href='https://github.com/billyroh/albers' ) View Source
+          a.button.ml3( href='https://github.com/billyroh/albers' ) Read Article
   section.homage
     .row.bottom-xs
       .col-xs-12.col-md-6
@@ -77,7 +78,7 @@ body
     .row.bottom-xs
       .col-xs-12.col-md-6
         .canvas#fox
-      .col-xs-12.col-md-6.controls
+      .col-xs-12.col-md-6: .controls
         h3 Anni Albers
         h2: a.black( href='http://www.albersfoundation.org/art/anni-albers/prints/#slide13' ) Fox II
         hr

@@ -16,7 +16,7 @@ $border-radius: 5px;
 
 body {
   font-family: -apple-system, 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  color: $dark-grey;
+  color: $medium-grey;
 }
 
 section {
@@ -36,6 +36,11 @@ h1,
 h2,
 h3 {
   line-height: 1.4;
+}
+
+h1,
+h2 {
+  color: $dark-grey;
 }
 
 h1 {
@@ -59,7 +64,7 @@ h3 {
 
 // Controls
 .controls {
-  padding-top: 2em;
+  padding-top: 4em;
   width: 100%;
   margin: 0 auto;
 }
@@ -68,8 +73,12 @@ table {
   margin-top: 1.5em;
   width: 100%;
   th {
-    padding: 0.5em 0.5em 0.5em 1em;
+    color: $light-grey;
+    padding: 0.5em;
     text-align: left;
+  }
+  td {
+    padding: 0.25em 0;
   }
 }
 
@@ -83,6 +92,7 @@ input[type='number'],
 input[type='text'] {
   border-radius: $border-radius;
   border: 1px solid $border-color;
+  color: $medium-grey;
   padding: 0.5em;
   transition: all 100ms ease-in-out;
   width: 100%;
@@ -94,6 +104,10 @@ input[type='number']:focus,
 input[type='text']:focus {
   border-color: $light-grey;
   outline: none;
+}
+
+input[type='radio'] {
+  margin-right: .3em;
 }
 
 a.black {

@@ -16,7 +16,6 @@ fox.diptych = {
 
 // Palette
 fox.palette = getFoxPalette()
-setFoxSwatches(fox.palette)
 
 function getFoxPalette() {
   let type = d3.select('input[name="foxType"]:checked').node().value
@@ -80,15 +79,6 @@ function getComplementaryFoxPalette() {
   }
 
   return [color1, color2, color3]
-}
-
-function setFoxSwatches(colors) {
-  _.forEach(colors, (color, i) => {
-    d3.select(`#fox${i + 1}-h`).property('value', `${color.h}`)
-    d3.select(`#fox${i + 1}-s`).property('value', `${color.s * 100}`)
-    d3.select(`#fox${i + 1}-l`).property('value', `${color.l * 100}`)
-    d3.select(`#fox${i + 1}-swatch`).style('background-color', getHsl(color))
-  })
 }
 
 // d3 setup
@@ -182,6 +172,8 @@ drawTriangles()
 drawCovers()
 
 function drawTriangles() {
+  setFoxSwatches(fox.palette)
+
   // Reset
   fox.canvas.selectAll('g.secondary > polygon').remove()
   fox.canvas.selectAll('g.primary > polygon').remove()
@@ -249,6 +241,15 @@ function updateCovers() {
   fox.canvas.selectAll('g.covers > rect').attr('fill', getHsl(fox.palette[0]))
   fox.canvas.selectAll('g.covers > rect').attr('fill', getHsl(fox.palette[0]))
   fox.canvas.style('background-color', getHsl(fox.palette[0]))
+}
+
+function setFoxSwatches(colors) {
+  _.forEach(colors, (color, i) => {
+    d3.select(`#fox${i + 1}-h`).property('value', `${color.h}`)
+    d3.select(`#fox${i + 1}-s`).property('value', `${color.s * 100}`)
+    d3.select(`#fox${i + 1}-l`).property('value', `${color.l * 100}`)
+    d3.select(`#fox${i + 1}-swatch`).style('background-color', getHsl(color))
+  })
 }
 
 // Interaction

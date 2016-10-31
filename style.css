@@ -1,6 +1,6 @@
 body {
   font-family: -apple-system, 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  color: #1a1a1a; }
+  color: #4d4d4d; }
 
 section {
   max-width: 1400px;
@@ -16,6 +16,10 @@ h1,
 h2,
 h3 {
   line-height: 1.4; }
+
+h1,
+h2 {
+  color: #1a1a1a; }
 
 h1 {
   font-size: 2.25rem;
@@ -34,7 +38,7 @@ h3 {
   margin-bottom: .5em; }
 
 .controls {
-  padding-top: 2em;
+  padding-top: 4em;
   width: 100%;
   margin: 0 auto; }
 
@@ -42,8 +46,11 @@ table {
   margin-top: 1.5em;
   width: 100%; }
   table th {
-    padding: 0.5em 0.5em 0.5em 1em;
+    color: #b3b3b3;
+    padding: 0.5em;
     text-align: left; }
+  table td {
+    padding: 0.25em 0; }
 
 .swatch {
   width: 20px;
@@ -54,6 +61,7 @@ input[type='number'],
 input[type='text'] {
   border-radius: 5px;
   border: 1px solid #e6e6e6;
+  color: #4d4d4d;
   padding: 0.5em;
   transition: all 100ms ease-in-out;
   width: 100%; }
@@ -64,6 +72,9 @@ input[type='number']:focus,
 input[type='text']:focus {
   border-color: #b3b3b3;
   outline: none; }
+
+input[type='radio'] {
+  margin-right: .3em; }
 
 a.black {
   color: #1a1a1a;
