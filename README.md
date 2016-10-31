@@ -1,2 +1,2 @@
 # Albers as a Millenial
-Generative art based on the works of Anni and Josef Albers.
+A series of generative images based on the works of Josef and Anni Albers.

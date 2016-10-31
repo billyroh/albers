@@ -7,7 +7,8 @@ $h1: 3rem;
 $h2: 1.5rem;
 $h3: 1rem;
 
-$weight: 400;
+$regular-weight: 400;
+$bold-weight: 500;
 
 $border-radius: 5px;
 
@@ -15,7 +16,6 @@ $border-radius: 5px;
 
 body {
   font-family: -apple-system, 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  font-weight: $weight;
   color: $dark-grey;
 }
 
@@ -35,24 +35,24 @@ section:last-of-type {
 h1,
 h2,
 h3 {
-  font-weight: $weight;
   line-height: 1.4;
 }
 
 h1 {
   font-size: $h1 * .75;
+  font-weight: $regular-weight;
 }
 
 h2 {
   font-size: $h2 * .75;
-  font-weight: 500;
+  font-weight: $bold-weight;
   margin-top: 0;
 }
 
 h3 {
   color: $light-grey;
   font-size: $h3 * .75;
-  font-weight: 500;
+  font-weight: $bold-weight;
   margin-top: 0;
   margin-bottom: .5em;
 }
@@ -60,6 +60,8 @@ h3 {
 // Controls
 .controls {
   padding-top: 2em;
+  width: 100%;
+  margin: 0 auto;
 }
 
 table {
@@ -74,6 +76,7 @@ table {
 .swatch {
   width: 20px;
   height: 20px;
+  border-radius: 50%;
 }
 
 input[type='number'],
@@ -98,6 +101,10 @@ a.black {
   text-decoration: none;
 }
 
+a.black:hover {
+  text-decoration: underline;
+}
+
 a.button {
   color: $dark-grey;
   text-decoration: none;
@@ -108,8 +115,8 @@ a.button {
   background: transparent;
   border: 2px solid $border-color;
   border-radius: $border-radius;
-  font-weight: 500;
-  padding: .75em 1.5em;
+  font-weight: $bold-weight;
+  padding: .9em 1.5em;
   transition: all 100ms ease-in-out;
 }
 
@@ -139,12 +146,14 @@ hr {
 
   h2 {
     font-size: $h2;
-    font-weight: $weight;
   }
 
   h3 {
     font-size: $h3;
-    font-weight: $weight;
+  }
+
+  .controls {
+    max-width: 300px;
   }
 
   section {
@@ -152,12 +161,7 @@ hr {
   }
 
   table {
-    width: inherit;
-  }
-
-  .controls {
-    padding-left: 4em;
-    padding-right: 4em;
+    width: auto;
   }
 }
 
