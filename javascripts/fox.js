@@ -91,26 +91,6 @@ fox.canvas =
 
 fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
-//// The left mask
-fox.diptychLeft =
-  fox.canvas.append("clipPath")
-      .attr("id", "diptych-left")
-    .append("rect")
-      .attr("x", fox.padding)
-      .attr("y", fox.padding)
-      .attr("width", fox.diptych.width)
-      .attr("height", fox.diptych.height)
-
-//// The right mask
-fox.diptychRight =
-  fox.canvas.append("clipPath")
-      .attr("id", "diptych-right")
-    .append("rect")
-      .attr("x", fox.padding + fox.diptych.width + fox.gutter)
-      .attr("y", fox.padding)
-      .attr("width", fox.diptych.width)
-      .attr("height", fox.diptych.height)
-
 // Generate dataset
 fox.coordinates = {}
 fox.coordinates.primary = getPrimaryCoordinates()
@@ -137,7 +117,18 @@ function getSecondaryCoordinates(primary) {
 }
 
 // Draw content
+fox.trianglesSecondary =
+  fox.canvas.append('g')
+    .attr('class', 'secondary')
+fox.trianglesPrimary =
+  fox.canvas.append('g')
+    .attr('class', 'primary')
+fox.covers =
+  fox.canvas.append('g')
+    .attr('class', 'covers')
+
 drawTriangles()
+drawCovers()
 
 function getPoints(x, y) {
   let random = _.random(3)
@@ -188,20 +179,12 @@ function drawTriangles() {
   fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
   // Draw triangles
-  fox.trianglesSecondary =
-    fox.canvas.append('g')
-      .attr('class', 'secondary')
-
   fox.trianglesSecondary.selectAll('polygon')
     .data(fox.coordinates.secondary)
     .enter()
     .append('polygon')
       .attr('points', (d) => d)
       .attr('fill', (d) => getHsl(fox.palette[1]))
-
-  fox.trianglesPrimary =
-    fox.canvas.append('g')
-      .attr('class', 'primary')
 
   fox.trianglesPrimary.selectAll('polygon')
     .data(fox.coordinates.primary)
@@ -210,12 +193,9 @@ function drawTriangles() {
       .attr('points', (d) => d)
       .attr('fill', (d) => getHsl(fox.palette[2]))
       .attr('opacity', .9)
+}
 
-  // Draw covers
-  fox.covers =
-    fox.canvas.append('g')
-      .attr('class', 'secondary')
-
+function drawCovers() {
   let wiggleRoom = fox.width * .1
 
   fox.covers.append('rect')
@@ -252,6 +232,12 @@ function drawTriangles() {
     .attr('x', fox.padding + fox.diptych.width)
     .attr('y', -wiggleRoom)
     .attr('fill', (d) => getHsl(fox.palette[0]))
+}
+
+function updateCovers() {
+  fox.canvas.selectAll('g.covers > rect').attr('fill', getHsl(fox.palette[0]))
+  fox.canvas.selectAll('g.covers > rect').attr('fill', getHsl(fox.palette[0]))
+  fox.canvas.style('background-color', getHsl(fox.palette[0]))
 }
 
 // Interaction
@@ -320,6 +306,7 @@ function redrawFox() {
   fox.coordinates.primary = getPrimaryCoordinates()
   fox.coordinates.secondary = getSecondaryCoordinates(fox.coordinates.primary)
   drawTriangles()
+  updateCovers()
   setFoxSwatches(fox.palette)
 }
 
@@ -338,4 +325,5 @@ d3.selectAll('.fox-input').on('input', () => {
 
   fox.palette = colors
   drawTriangles()
+  updateCovers()
 })
