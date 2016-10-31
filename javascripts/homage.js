@@ -153,8 +153,6 @@ homage.canvas.on('mousemove', function () {
   } else {
     homage.squares.attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
   }
-
-  // TODO (bonus point) add drop shadow when animating
 })
 
 homage.canvas.on('mouseleave', function () {
@@ -169,7 +167,6 @@ homage.canvas.on('mouseleave', function () {
 })
 
 homage.canvas.on('mouseup', () => {
-  // TODO (bonus point) click to change colours and have the squares radiate out
   homage.dataset = getHomagePalette()
   drawSquares()
 })
