@@ -21,8 +21,10 @@ function getHomagePalette() {
 
 function getAnalagousHomagePalette() {
   let color1 = getRandomColor()
+  color1.l = _.floor(_.random(.6, .9, true), 2)
   let color4 = getRandomColor()
   color4.h = getRandomHue(color1.h, .1)
+  color4.l = _.floor(_.random(.1, .4, true), 2)
 
   let hIncrement = _.round((color1.h - color4.h) / 3)
   let sIncrement = _.floor((color1.s - color4.s) / 3, 2)

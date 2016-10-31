@@ -1,5 +1,6 @@
 head
   title Millenial Albers
+  meta(name='viewport' content='width=device-width, initial-scale=1')
   link(href='node_modules/normalize.css/normalize.css' rel='stylesheet' type='text/css')
   link(href='node_modules/tachyons/css/tachyons.css' rel='stylesheet' type='text/css')
   link(href='node_modules/flexboxgrid/css/flexboxgrid.min.css' rel='stylesheet' type='text/css')
@@ -10,104 +11,116 @@ head
   script(src='node_modules/d3-transition/build/d3-transition.min.js')
   script(src='node_modules/d3-scale/build/d3-scale.min.js')
 body
-  section
-    h1 Albers as a Millenial
+  section.intro: .row.pt4
+    .col-xs-12.col-md-9
+      h2 Albers as a Millenial
+      hr
+      h1 A series of generative images based on the works of Josef and Anni Albers.
+      .button-group.mt5
+        a.button( href='https://github.com/billyroh/albers' ) View Source
+        a.button.ml3( href='https://github.com/billyroh/albers' ) Read Article
   section.homage
-    .row
+    .row.bottom-xs
       .col-xs-12.col-md-6
         .canvas#homage
-      .col-xs-12.col-md-6
-        h2 Homage to the Square
+      .col-xs-12.col-md-6.controls
         h3 Josef Albers
-        .row: .col-xs-12
-          label.homageType.fl.mr4
-            input(
-              type='radio'
-              name='homageType'
-              value='analagous'
-              checked='checked'
-            )
-            span.pl2 Analagous
-          label.homageType.fl
-            input.pr4(
-              type='radio'
-              name='homageType'
-              value='complementary'
-            )
-            span.pl2 Complementary
+        h2: a.black( href='http://www.albersfoundation.org/art/josef-albers/paintings/homages-to-the-square/index/' ) Homage to the Square
+        hr
+        .row
+          .col-xs-12.mt4
+            label.homageType.fl.mr4
+              input(
+                type='radio'
+                name='homageType'
+                value='analagous'
+                checked='checked'
+              )
+              span.pl2 Analagous
+          .col-xs-12.mt3
+            label.homageType.fl
+              input.pr4(
+                type='radio'
+                name='homageType'
+                value='complementary'
+              )
+              span.pl2 Complementary
         table
           tbody
             tr
+              th H
+              th S
+              th L
               th
-              th.tc H
-              th.tc S
-              th.tc L
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#square1-swatch
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square1-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square1-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.homage-input.ba.b--black-10.br2#square1-l( type='number' min='0' max='100' )
+              td.pr2: input.homage-input#square1-h( type='number' min='0' max='360' )
+              td.ph2: input.homage-input#square1-s( type='number' min='0' max='100' )
+              td.ph2: input.homage-input#square1-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#square1-swatch
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#square2-swatch
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square2-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square2-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.homage-input.ba.b--black-10.br2#square2-l( type='number' min='0' max='100' )
+              td.pr2: input.homage-input#square2-h( type='number' min='0' max='360' )
+              td.ph2: input.homage-input#square2-s( type='number' min='0' max='100' )
+              td.ph2: input.homage-input#square2-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#square2-swatch
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#square3-swatch
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square3-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square3-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.homage-input.ba.b--black-10.br2#square3-l( type='number' min='0' max='100' )
+              td.pr2: input.homage-input#square3-h( type='number' min='0' max='360' )
+              td.ph2: input.homage-input#square3-s( type='number' min='0' max='100' )
+              td.ph2: input.homage-input#square3-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#square3-swatch
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#square4-swatch
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.homage-input.ba.b--black-10.br2#square4-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.homage-input.ba.b--black-10.br2#square4-l( type='number' min='0' max='100' )
-        button.button( onclick='homage.dataset = getHomagePalette(); drawSquares()' ) Redraw
+              td.pr2: input.homage-input#square4-h( type='number' min='0' max='360' )
+              td.ph2: input.homage-input#square4-s( type='number' min='0' max='100' )
+              td.ph2: input.homage-input#square4-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#square4-swatch  
+        button.button.mt4( onclick='homage.dataset = getHomagePalette(); drawSquares()' ) Redraw
   section
-    .row
+    .row.bottom-xs
       .col-xs-12.col-md-6
         .canvas#fox
-      .col-xs-12.col-md-6
-        h2 Fox II
+      .col-xs-12.col-md-6.controls
         h3 Anni Albers
-        .row: .col-xs-12
-          label.homageType.fl.mr4
-            input(
-              type='radio'
-              name='foxType'
-              value='analagous'
-              checked='checked'
-            )
-            span.pl2 Analagous
-          label.homageType.fl
-            input.pr4(
-              type='radio'
-              name='foxType'
-              value='complementary'
-            )
-            span.pl2 Complementary
+        h2: a.black( href='http://www.albersfoundation.org/art/anni-albers/prints/#slide13' ) Fox II
+        hr
+        .row
+          .col-xs-12.mt4
+            label.homageType.fl.mr4
+              input(
+                type='radio'
+                name='foxType'
+                value='analagous'
+                checked='checked'
+              )
+              span.pl2 Analagous
+          .col-xs-12.mt3
+            label.homageType.fl
+              input.pr4(
+                type='radio'
+                name='foxType'
+                value='complementary'
+              )
+              span.pl2 Complementary
         table
           tbody
             tr
+              th H
+              th S
+              th L
               th
-              th.tc H
-              th.tc S
-              th.tc L
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#fox1-swatch
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox1-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox1-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox1-l( type='number' min='0' max='100' )
+              td.pr2: input.fox-input#fox1-h( type='number' min='0' max='360' )
+              td.ph2: input.fox-input#fox1-s( type='number' min='0' max='100' )
+              td.ph2: input.fox-input#fox1-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#fox1-swatch
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#fox2-swatch
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox2-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox2-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox2-l( type='number' min='0' max='100' )
+              td.pr2: input.fox-input#fox2-h( type='number' min='0' max='360' )
+              td.ph2: input.fox-input#fox2-s( type='number' min='0' max='100' )
+              td.ph2: input.fox-input#fox2-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#fox2-swatch
             tr
-              td.tr.pr2: .swatch.ba.b--black-10.br2#fox3-swatch
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox3-h( type='number' min='0' max='360' )
-              td.tc.ph2: input.fox-input.ba.b--black-10.br2#fox3-s( type='number' min='0' max='100' )
-              td.tc.pl2: input.fox-input.ba.b--black-10.br2#fox3-l( type='number' min='0' max='100' )
-        button.button( onclick='redrawFox()' ) Redraw
+              td.pr2: input.fox-input#fox3-h( type='number' min='0' max='360' )
+              td.ph2: input.fox-input#fox3-s( type='number' min='0' max='100' )
+              td.ph2: input.fox-input#fox3-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#fox3-swatch
+        button.button.mt4( onclick='redrawFox()' ) Redraw
   script(src='javascripts/homage.js')
   script(src='javascripts/fox.js')

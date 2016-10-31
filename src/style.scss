@@ -1,21 +1,74 @@
+$dark-grey: hsl(0, 0, 10%);
+$medium-grey: hsl(0, 0, 30%);
+$light-grey: hsl(0, 0, 70%);
+$border-color: hsl(0, 0, 90%);
+
+$h1: 3rem;
+$h2: 1.5rem;
+$h3: 1rem;
+
+$weight: 400;
+
+$border-radius: 5px;
+
+// Layout
+
 body {
-  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  padding: 0;
+  font-family: -apple-system, 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-weight: $weight;
+  color: $dark-grey;
 }
 
 section {
-  max-width: 1200px;
+  max-width: 1400px;
+  min-height: 80vh;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 2rem;
 }
 
-p {
-
+section:last-of-type {
+  padding-bottom: 8rem;
 }
 
-.canvas {
+// Typography
+h1,
+h2,
+h3 {
+  font-weight: $weight;
+  line-height: 1.4;
+}
+
+h1 {
+  font-size: $h1 * .75;
+}
+
+h2 {
+  font-size: $h2 * .75;
+  font-weight: 500;
+  margin-top: 0;
+}
+
+h3 {
+  color: $light-grey;
+  font-size: $h3 * .75;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: .5em;
+}
+
+// Controls
+.controls {
+  padding-top: 2em;
+}
+
+table {
+  margin-top: 1.5em;
   width: 100%;
+  th {
+    padding: 0.5em 0.5em 0.5em 1em;
+    text-align: left;
+  }
 }
 
 .swatch {
@@ -25,5 +78,91 @@ p {
 
 input[type='number'],
 input[type='text'] {
+  border-radius: $border-radius;
+  border: 1px solid $border-color;
   padding: 0.5em;
+  transition: all 100ms ease-in-out;
+  width: 100%;
+}
+
+input[type='number']:hover,
+input[type='text']:hover,
+input[type='number']:focus,
+input[type='text']:focus {
+  border-color: $light-grey;
+  outline: none;
+}
+
+a.black {
+  color: $dark-grey;
+  text-decoration: none;
+}
+
+a.button {
+  color: $dark-grey;
+  text-decoration: none;
+}
+
+button,
+a.button {
+  background: transparent;
+  border: 2px solid $border-color;
+  border-radius: $border-radius;
+  font-weight: 500;
+  padding: .75em 1.5em;
+  transition: all 100ms ease-in-out;
+}
+
+button:hover,
+a.button:hover {
+  cursor: pointer;
+  border-color: $light-grey;
+}
+
+button:focus,
+a.button:focus {
+  border-color: $light-grey;
+  outline:0;
+}
+
+hr {
+  border: none;
+  border-top: 2px solid $light-grey;
+  margin-left: 0;
+  width: 40px;
+}
+
+@media (min-width: 500px) {
+  h1 {
+    font-size: $h1;
+  }
+
+  h2 {
+    font-size: $h2;
+    font-weight: $weight;
+  }
+
+  h3 {
+    font-size: $h3;
+    font-weight: $weight;
+  }
+
+  section {
+    padding: 4rem;
+  }
+
+  table {
+    width: inherit;
+  }
+
+  .controls {
+    padding-left: 4em;
+    padding-right: 4em;
+  }
+}
+
+@media (min-width: 990px) {
+  section {
+    padding: 6rem;
+  }
 }

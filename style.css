@@ -1,15 +1,48 @@
 body {
-  font-family: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
-  padding: 0; }
+  font-family: -apple-system, 'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 400;
+  color: #1a1a1a; }
 
 section {
-  max-width: 1200px;
+  max-width: 1400px;
+  min-height: 80vh;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 20px; }
+  padding: 2rem; }
 
-.canvas {
+section:last-of-type {
+  padding-bottom: 8rem; }
+
+h1,
+h2,
+h3 {
+  font-weight: 400;
+  line-height: 1.4; }
+
+h1 {
+  font-size: 2.25rem; }
+
+h2 {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-top: 0; }
+
+h3 {
+  color: #b3b3b3;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-top: 0;
+  margin-bottom: .5em; }
+
+.controls {
+  padding-top: 2em; }
+
+table {
+  margin-top: 1.5em;
   width: 100%; }
+  table th {
+    padding: 0.5em 0.5em 0.5em 1em;
+    text-align: left; }
 
 .swatch {
   width: 20px;
@@ -17,6 +50,75 @@ section {
 
 input[type='number'],
 input[type='text'] {
-  padding: 0.5em; }
+  border-radius: 5px;
+  border: 1px solid #e6e6e6;
+  padding: 0.5em;
+  transition: all 100ms ease-in-out;
+  width: 100%; }
+
+input[type='number']:hover,
+input[type='text']:hover,
+input[type='number']:focus,
+input[type='text']:focus {
+  border-color: #b3b3b3;
+  outline: none; }
+
+a.black {
+  color: #1a1a1a;
+  text-decoration: none; }
+
+a.button {
+  color: #1a1a1a;
+  text-decoration: none; }
+
+button,
+a.button {
+  background: transparent;
+  border: 2px solid #e6e6e6;
+  border-radius: 5px;
+  font-weight: 500;
+  padding: .75em 1.5em;
+  transition: all 100ms ease-in-out; }
+
+button:hover,
+a.button:hover {
+  cursor: pointer;
+  border-color: #b3b3b3; }
+
+button:focus,
+a.button:focus {
+  border-color: #b3b3b3;
+  outline: 0; }
+
+hr {
+  border: none;
+  border-top: 2px solid #b3b3b3;
+  margin-left: 0;
+  width: 40px; }
+
+@media (min-width: 500px) {
+  h1 {
+    font-size: 3rem; }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 400; }
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 400; }
+
+  section {
+    padding: 4rem; }
+
+  table {
+    width: inherit; }
+
+  .controls {
+    padding-left: 4em;
+    padding-right: 4em; } }
+@media (min-width: 990px) {
+  section {
+    padding: 6rem; } }
 
 /*# sourceMappingURL=style.css.map */

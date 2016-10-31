@@ -57,7 +57,7 @@ function getAnalagousFoxPalette() {
 function getComplementaryFoxPalette() {
   let s = {
     min: .3,
-    max: .7
+    max: .8
   }
 
   let color1 = {
@@ -66,17 +66,17 @@ function getComplementaryFoxPalette() {
     l: _.floor(_.random(.7, .9, true), 2),
   }
 
-  let complementaryHue = (color1.h + 180) % 360
   let color2 = {
     h: color1.h,
     s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.4, .6, true), 2),
   }
 
+  let complementaryHue = (color1.h + 180) % 360
   let color3 = {
     h: getRandomHue(complementaryHue, .1),
     s: _.floor(_.random(s.min, s.max, true), 2),
-    l: _.floor(_.random(.1, .3, true), 2),
+    l: _.floor(_.random(.1, .6, true), 2),
   }
 
   return [color1, color2, color3]
@@ -90,7 +90,6 @@ function setFoxSwatches(colors) {
     d3.select(`#fox${i + 1}-swatch`).style('background-color', getHsl(color))
   })
 }
-
 
 // d3 setup
 fox.canvas =
@@ -284,8 +283,8 @@ fox.canvas.on('mousemove', function () {
       .transition(d3.easeBounce)
         .duration(75)
         .attr('transform', (d, i) => {
-          let xIncrement = fox.cursorScale(xCoordinate) * fox.triangleHeight
-          let yIncrement = fox.cursorScale(yCoordinate) * fox.triangleHeight
+          let xIncrement = fox.cursorScale(xCoordinate) * (fox.width * 0.05)
+          let yIncrement = fox.cursorScale(yCoordinate) * (fox.width * 0.05)
           return `translate(${xIncrement}, ${yIncrement})`
         })
         .on('end', () => { fox.initialAnimationDidFinish = true})
@@ -297,8 +296,8 @@ fox.canvas.on('mousemove', function () {
       return `translate(${xIncrement}, ${yIncrement})`
     })
     fox.covers.attr('transform', (d, i) => {
-      let xIncrement = fox.cursorScale(xCoordinate) * fox.triangleHeight
-      let yIncrement = fox.cursorScale(yCoordinate) * fox.triangleHeight
+      let xIncrement = fox.cursorScale(xCoordinate) * (fox.width * 0.05)
+      let yIncrement = fox.cursorScale(yCoordinate) * (fox.width * 0.05)
       return `translate(${xIncrement}, ${yIncrement})`
     })
   }
