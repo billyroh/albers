@@ -28,21 +28,26 @@ function getFoxPalette() {
 }
 
 function getAnalagousFoxPalette() {
+  let s = {
+    min: .1,
+    max: .4
+  }
+
   let color1 = {
     h: _.random(0, 360),
-    s: _.floor(_.random(.2, .3, true), 2),
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.9, .98, true), 2),
   }
 
   let color2 = {
     h: getRandomHue(color1.h, .1),
-    s: color1.s,
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.4, .6, true), 2),
   }
 
   let color3 = {
     h: getRandomHue(color1.h, .1),
-    s: _.floor((color1.s + color2.s) / 2, 2),
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.1, .2, true), 2),
   }
 
@@ -50,22 +55,27 @@ function getAnalagousFoxPalette() {
 }
 
 function getComplementaryFoxPalette() {
+  let s = {
+    min: .3,
+    max: .7
+  }
+
   let color1 = {
     h: _.random(0, 360),
-    s: _.floor(_.random(.6, .8, true), 2),
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.7, .9, true), 2),
   }
 
-  let complementaryHue = getRandomHue((color1.h + 180) % 360, .1);
+  let complementaryHue = (color1.h + 180) % 360
   let color2 = {
-    h: complementaryHue,
-    s: _.floor(_.random(.6, .8, true), 2),
+    h: color1.h,
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.4, .6, true), 2),
   }
 
   let color3 = {
-    h: complementaryHue,
-    s: _.floor(_.random(.6, .8, true), 2),
+    h: getRandomHue(complementaryHue, .1),
+    s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.1, .3, true), 2),
   }
 
@@ -91,6 +101,18 @@ fox.canvas =
 
 fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
+fox.trianglesSecondary =
+  fox.canvas.append('g')
+    .attr('class', 'secondary')
+
+fox.trianglesPrimary =
+  fox.canvas.append('g')
+    .attr('class', 'primary')
+
+fox.covers =
+  fox.canvas.append('g')
+    .attr('class', 'covers')
+
 // Generate dataset
 fox.coordinates = {}
 fox.coordinates.primary = getPrimaryCoordinates()
@@ -115,20 +137,6 @@ function getSecondaryCoordinates(primary) {
   })
   return dataset
 }
-
-// Draw content
-fox.trianglesSecondary =
-  fox.canvas.append('g')
-    .attr('class', 'secondary')
-fox.trianglesPrimary =
-  fox.canvas.append('g')
-    .attr('class', 'primary')
-fox.covers =
-  fox.canvas.append('g')
-    .attr('class', 'covers')
-
-drawTriangles()
-drawCovers()
 
 function getPoints(x, y) {
   let random = _.random(3)
@@ -169,6 +177,10 @@ function getOffset(points) {
 
   return `${point1}, ${point2}, ${point3}`
 }
+
+// Draw content
+drawTriangles()
+drawCovers()
 
 function drawTriangles() {
   // Reset
@@ -256,6 +268,7 @@ fox.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
 
+  // Use a transition for the initial animation
   if (!fox.initialAnimationDidFinish) {
     fox.trianglesSecondary
       .interrupt()
@@ -276,13 +289,13 @@ fox.canvas.on('mousemove', function () {
           return `translate(${xIncrement}, ${yIncrement})`
         })
         .on('end', () => { fox.initialAnimationDidFinish = true})
+  // Once the initial animation is finished, track the cursor linearly
   } else {
     fox.trianglesSecondary.attr('transform', (d, i) => {
       let xIncrement = _.floor(-fox.cursorScale(xCoordinate) * (fox.triangleHeight / 4))
       let yIncrement = _.floor(-fox.cursorScale(yCoordinate) * (fox.triangleHeight / 4))
       return `translate(${xIncrement}, ${yIncrement})`
     })
-
     fox.covers.attr('transform', (d, i) => {
       let xIncrement = fox.cursorScale(xCoordinate) * fox.triangleHeight
       let yIncrement = fox.cursorScale(yCoordinate) * fox.triangleHeight

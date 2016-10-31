@@ -60,8 +60,8 @@ function getComplementaryHomagePalette() {
 function getRandomColor() {
   return {
     h: _.random(0, 360),
-    s: _.floor(_.random(.2, .8, true), 2),
-    l: _.floor(_.random(.2, .8, true), 2),
+    s: _.floor(_.random(.1, .6, true), 2),
+    l: _.floor(_.random(.1, .9, true), 2),
   }
 }
 
