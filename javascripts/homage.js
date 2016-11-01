@@ -12,18 +12,18 @@ homage.dataset = getHomagePalette()
 
 function getHomagePalette() {
   let type = d3.select('input[name="homageType"]:checked').node().value
-  if (type === 'analagous') {
-    return getAnalagousHomagePalette()
-  } else if (type === 'complementary') {
-    return getComplementaryHomagePalette()
+  if (type === 'analogous') {
+    return getAnalogousHomagePalette()
+  } else if (type === 'triad') {
+    return getTriadHomagePalette()
   }
 }
 
-function getAnalagousHomagePalette() {
+function getAnalogousHomagePalette() {
   let color1 = getRandomColor()
   color1.l = _.floor(_.random(.6, .9, true), 2)
   let color4 = getRandomColor()
-  color4.h = getRandomHue(color1.h, .1)
+  color4.h = getRandomHue(color1.h, .2)
   color4.l = _.floor(_.random(.1, .4, true), 2)
 
   let hIncrement = _.round((color1.h - color4.h) / 3)
@@ -44,14 +44,14 @@ function getAnalagousHomagePalette() {
   return _.shuffle([color1, color2, color3, color4])
 }
 
-function getComplementaryHomagePalette() {
+function getTriadHomagePalette() {
   let color1 = getRandomColor()
   let color2 = getRandomColor()
   color2.h = getRandomHue(color1.h, .1)
 
-  let complementaryHue = (color1.h + 180) % 360;
+  let triadHue = (color1.h + _.sample([100, -100])) % 360
   let color4 = getRandomColor()
-  color4.h = getRandomHue(complementaryHue, .1)
+  color4.h = getRandomHue(triadHue, .2)
 
   let color3 = getRandomColor()
   color3.h = getRandomHue(color4.h, .1)

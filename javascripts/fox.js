@@ -19,14 +19,14 @@ fox.palette = getFoxPalette()
 
 function getFoxPalette() {
   let type = d3.select('input[name="foxType"]:checked').node().value
-  if (type === 'analagous') {
-    return getAnalagousFoxPalette()
+  if (type === 'analogous') {
+    return getAnalogousFoxPalette()
   } else if (type === 'complementary') {
     return getComplementaryFoxPalette()
   }
 }
 
-function getAnalagousFoxPalette() {
+function getAnalogousFoxPalette() {
   let s = {
     min: .1,
     max: .4
@@ -39,13 +39,13 @@ function getAnalagousFoxPalette() {
   }
 
   let color2 = {
-    h: getRandomHue(color1.h, .1),
+    h: getRandomHue(color1.h, .2),
     s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.4, .6, true), 2),
   }
 
   let color3 = {
-    h: getRandomHue(color1.h, .1),
+    h: getRandomHue(color1.h, .2),
     s: _.floor(_.random(s.min, s.max, true), 2),
     l: _.floor(_.random(.1, .2, true), 2),
   }
