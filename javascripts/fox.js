@@ -134,37 +134,33 @@ function getPoints(x, y) {
   let yAdjusted = y - _.floor(fox.triangleHeight / 2)
 
   if (random === 0) {
-    point1 = `${xAdjusted}, ${yAdjusted}`
-    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
-    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point1 = [xAdjusted, yAdjusted]
+    point2 = [fox.triangleHeight + xAdjusted, fox.triangleHeight + yAdjusted]
+    point3 = [xAdjusted, fox.triangleHeight + yAdjusted]
   } else if (random === 1) {
-    point1 = `${xAdjusted}, ${yAdjusted}`
-    point2 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
-    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point1 = [xAdjusted, yAdjusted]
+    point2 = [fox.triangleHeight + xAdjusted, yAdjusted]
+    point3 = [xAdjusted, fox.triangleHeight + yAdjusted]
   } else if (random === 2) {
-    point1 = `${xAdjusted}, ${yAdjusted}`
-    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
-    point3 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
+    point1 = [xAdjusted, yAdjusted]
+    point2 = [fox.triangleHeight + xAdjusted, fox.triangleHeight + yAdjusted]
+    point3 = [fox.triangleHeight + xAdjusted, yAdjusted]
   } else if (random === 3) {
-    point1 = `${fox.triangleHeight + xAdjusted}, ${yAdjusted}`
-    point2 = `${fox.triangleHeight + xAdjusted}, ${fox.triangleHeight + yAdjusted}`
-    point3 = `${xAdjusted}, ${fox.triangleHeight + yAdjusted}`
+    point1 = [fox.triangleHeight + xAdjusted, yAdjusted]
+    point2 = [fox.triangleHeight + xAdjusted, fox.triangleHeight + yAdjusted]
+    point3 = [xAdjusted, fox.triangleHeight + yAdjusted]
   }
 
-  return `${point1}, ${point2}, ${point3}`
+  return [point1, point2, point3]
 }
 
 function getOffset(points) {
-  let pointsArray = points.split(',')
-  _.forEach(pointsArray, (point, index) => {
-    pointsArray[index] = parseFloat(pointsArray[index])
-  })
   let offset = _.floor(fox.triangleHeight / 3.5)
-  let point1 = `${pointsArray[0] - offset}, ${pointsArray[1] + offset}`
-  let point2 = `${pointsArray[2] - offset}, ${pointsArray[3] + offset}`
-  let point3 = `${pointsArray[4] - offset}, ${pointsArray[5] + offset}`
+  let point1 = [points[0][0] - offset, points[0][1] + offset]
+  let point2 = [points[1][0] - offset, points[1][1] + offset]
+  let point3 = [points[2][0] - offset, points[2][1] + offset]
 
-  return `${point1}, ${point2}, ${point3}`
+  return [point1, point2, point3]
 }
 
 // Draw content
@@ -175,27 +171,38 @@ function drawTriangles() {
   setFoxSwatches(fox.palette)
 
   // Reset
-  fox.canvas.selectAll('g.secondary > polygon').remove()
-  fox.canvas.selectAll('g.primary > polygon').remove()
+  fox.canvas.selectAll('g.secondary > path').remove()
+  fox.canvas.selectAll('g.primary > path').remove()
 
   // Draw background
   fox.canvas.style('background-color', getHsl(fox.palette[0]))
 
   // Draw triangles
-  fox.trianglesSecondary.selectAll('polygon')
-    .data(fox.coordinates.secondary)
+  fox.trianglesSecondary.selectAll('path')
+    .data(['1'])
     .enter()
-    .append('polygon')
-      .attr('points', (d) => d)
-      .attr('fill', (d) => getHsl(fox.palette[1]))
+    .append('path')
+      .attr('d', createPath(fox.coordinates.secondary))
+      .attr('fill', getHsl(fox.palette[1]))
 
-  fox.trianglesPrimary.selectAll('polygon')
-    .data(fox.coordinates.primary)
+  fox.trianglesPrimary.selectAll('path')
+    .data(['1'])
     .enter()
-    .append('polygon')
-      .attr('points', (d) => d)
-      .attr('fill', (d) => getHsl(fox.palette[2]))
+    .append('path')
+      .attr('d', createPath(fox.coordinates.primary))
+      .attr('fill', getHsl(fox.palette[2]))
       .attr('opacity', .9)
+}
+
+function createPath(coordinates) {
+  let path = ''
+  _.forEach(coordinates, (triangle, i) => {
+    let point1 = `M ${triangle[0][0]}, ${triangle[0][1]}`
+    let point2 = `L ${triangle[1][0]}, ${triangle[1][1]}`
+    let point3 = `L ${triangle[2][0]}, ${triangle[2][1]} Z`
+    path += `${point1} ${point2} ${point3}`
+  })
+  return path
 }
 
 function drawCovers() {

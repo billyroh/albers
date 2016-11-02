@@ -229,19 +229,19 @@ function handleOrientation(event) {
 }
 
 var deviceBetaScale = d3.scaleLinear()
-  .domain([-100, 100])
+  .domain([-90, 90])
   .range([0, homage.width])
   .clamp(true)
 
 var deviceGammaScale = d3.scaleLinear()
-  .domain([-70, 70])
+  .domain([-50, 50])
   .range([0, homage.width])
   .clamp(true)
 
 if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", handleOrientation, true);
+    window.addEventListener("deviceorientation", _.throttle(handleOrientation, 10), true);
 } else if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', handleOrientation, true);
+    window.addEventListener('devicemotion', _.throttle(handleOrientation, 10), true);
 } else {
-    window.addEventListener("MozOrientation", handleOrientation, true);
+    window.addEventListener("MozOrientation", _.throttle(handleOrientation, 10), true);
 }
