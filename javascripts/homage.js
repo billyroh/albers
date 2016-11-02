@@ -22,6 +22,7 @@ function getHomagePalette() {
 function getAnalogousHomagePalette() {
   let color1 = getRandomColor()
   color1.l = _.floor(_.random(.6, .9, true), 2)
+  
   let color4 = getRandomColor()
   color4.h = getRandomHue(color1.h, .2)
   color4.l = _.floor(_.random(.1, .4, true), 2)
