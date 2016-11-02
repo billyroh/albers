@@ -220,7 +220,6 @@ d3.selectAll('.homage-input').on('input', () => {
   drawSquares()
 })
 
-
 function handleOrientation(event) {
   let beta = deviceBetaScale(event.beta)
   let gamma = deviceGammaScale(event.gamma)
@@ -239,4 +238,10 @@ var deviceGammaScale = d3.scaleLinear()
   .range([0, homage.width])
   .clamp(true)
 
-window.addEventListener('deviceorientation', handleOrientation);
+if (window.DeviceOrientationEvent) {
+    window.addEventListener("deviceorientation", handleOrientation, true);
+} else if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', handleOrientation, true);
+} else {
+    window.addEventListener("MozOrientation", handleOrientation, true);
+}
