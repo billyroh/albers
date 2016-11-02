@@ -267,41 +267,7 @@ fox.cursorScale = d3.scaleLinear()
 fox.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
-
-  // Use a transition for the initial animation
-  if (!fox.initialAnimationDidFinish) {
-    fox.trianglesSecondary
-      .interrupt()
-      .transition(d3.easeBounce)
-        .duration(75)
-        .attr('transform', (d, i) => {
-          let xIncrement = _.floor(-fox.cursorScale(xCoordinate) * (fox.triangleHeight / 4))
-          let yIncrement = _.floor(-fox.cursorScale(yCoordinate) * (fox.triangleHeight / 4))
-          return `translate(${xIncrement}, ${yIncrement})`
-        })
-    fox.covers
-      .interrupt()
-      .transition(d3.easeBounce)
-        .duration(75)
-        .attr('transform', (d, i) => {
-          let xIncrement = fox.cursorScale(xCoordinate) * (fox.width * 0.05)
-          let yIncrement = fox.cursorScale(yCoordinate) * (fox.width * 0.05)
-          return `translate(${xIncrement}, ${yIncrement})`
-        })
-        .on('end', () => { fox.initialAnimationDidFinish = true})
-  // Once the initial animation is finished, track the cursor linearly
-  } else {
-    fox.trianglesSecondary.attr('transform', (d, i) => {
-      let xIncrement = _.floor(-fox.cursorScale(xCoordinate) * (fox.triangleHeight / 4))
-      let yIncrement = _.floor(-fox.cursorScale(yCoordinate) * (fox.triangleHeight / 4))
-      return `translate(${xIncrement}, ${yIncrement})`
-    })
-    fox.covers.attr('transform', (d, i) => {
-      let xIncrement = fox.cursorScale(xCoordinate) * (fox.width * 0.05)
-      let yIncrement = fox.cursorScale(yCoordinate) * (fox.width * 0.05)
-      return `translate(${xIncrement}, ${yIncrement})`
-    })
-  }
+  animateFox(xCoordinate, yCoordinate)
 })
 
 fox.canvas.on('mouseleave', function () {
@@ -313,6 +279,43 @@ fox.canvas.on('mouseleave', function () {
     .attr('transform', (d) => `translate(0, 0)`)
     .on('end', () => { fox.initialAnimationDidFinish = false})
 })
+
+function animateFox(x, y) {
+  // Use a transition for the initial animation
+  if (!fox.initialAnimationDidFinish) {
+    fox.trianglesSecondary
+      .interrupt()
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('transform', (d, i) => {
+          let xIncrement = _.floor(-fox.cursorScale(x) * (fox.triangleHeight / 4))
+          let yIncrement = _.floor(-fox.cursorScale(y) * (fox.triangleHeight / 4))
+          return `translate(${xIncrement}, ${yIncrement})`
+        })
+    fox.covers
+      .interrupt()
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('transform', (d, i) => {
+          let xIncrement = fox.cursorScale(x) * (fox.width * 0.05)
+          let yIncrement = fox.cursorScale(y) * (fox.width * 0.05)
+          return `translate(${xIncrement}, ${yIncrement})`
+        })
+        .on('end', () => { fox.initialAnimationDidFinish = true})
+  // Once the initial animation is finished, track the cursor linearly
+  } else {
+    fox.trianglesSecondary.attr('transform', (d, i) => {
+      let xIncrement = _.floor(-fox.cursorScale(x) * (fox.triangleHeight / 4))
+      let yIncrement = _.floor(-fox.cursorScale(y) * (fox.triangleHeight / 4))
+      return `translate(${xIncrement}, ${yIncrement})`
+    })
+    fox.covers.attr('transform', (d, i) => {
+      let xIncrement = fox.cursorScale(x) * (fox.width * 0.05)
+      let yIncrement = fox.cursorScale(y) * (fox.width * 0.05)
+      return `translate(${xIncrement}, ${yIncrement})`
+    })
+  }
+}
 
 function redrawFox() {
   fox.palette = getFoxPalette()

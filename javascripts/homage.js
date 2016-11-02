@@ -142,18 +142,7 @@ homage.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
 
-  // Use a transition for the initial animation
-  if (!homage.initialAnimationDidFinish) {
-    homage.canvas.selectAll('rect')
-      .interrupt()
-      .transition(d3.easeBounce)
-        .duration(75)
-        .attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
-        .on('end', () => { homage.initialAnimationDidFinish = true})
-  // Once the initial animation is finished, track the cursor linearly
-  } else {
-    homage.squares.attr('transform', (d, i) => getNewTransform(i, xCoordinate, yCoordinate))
-  }
+  animateHomage(xCoordinate, yCoordinate)
 })
 
 homage.canvas.on('mouseleave', function () {
@@ -176,6 +165,21 @@ homage.cursorScale = d3.scaleLinear()
   .domain([0, homage.width])
   .range([-1, 1])
   .clamp(true)
+
+function animateHomage(x, y) {
+  // Use a transition for the initial animation
+  if (!homage.initialAnimationDidFinish) {
+    homage.canvas.selectAll('rect')
+      .interrupt()
+      .transition(d3.easeBounce)
+        .duration(75)
+        .attr('transform', (d, i) => getNewTransform(i, x, y))
+        .on('end', () => { homage.initialAnimationDidFinish = true})
+  // Once the initial animation is finished, track the cursor linearly
+  } else {
+    homage.squares.attr('transform', (d, i) => getNewTransform(i, x, y))
+  }
+}
 
 function getNewTransform(i, xCoordinate, yCoordinate) {
   if (i === 0) { return }
@@ -215,3 +219,24 @@ d3.selectAll('.homage-input').on('input', () => {
   homage.dataset = colors
   drawSquares()
 })
+
+
+function handleOrientation(event) {
+  let beta = deviceBetaScale(event.beta)
+  let gamma = deviceGammaScale(event.gamma)
+
+  animateHomage(gamma, beta)
+  animateFox(gamma, beta)
+}
+
+var deviceBetaScale = d3.scaleLinear()
+  .domain([-100, 100])
+  .range([0, homage.width])
+  .clamp(true)
+
+var deviceGammaScale = d3.scaleLinear()
+  .domain([-70, 70])
+  .range([0, homage.width])
+  .clamp(true)
+
+window.addEventListener('deviceorientation', handleOrientation);
