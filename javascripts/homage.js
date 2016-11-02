@@ -2,13 +2,13 @@
 // JOSEF ALBERS
 
 // Basic variables
-let homage = {
+var homage = {
   width: d3.select('#homage').node().getBoundingClientRect().width,
   dataset: [],
 }
 
 // Palette
-homage.dataset = getHomagePalette()
+homage.dataset = getHomagePalette();
 
 function getHomagePalette() {
   let type = d3.select('input[name="homageType"]:checked').node().value
@@ -22,7 +22,7 @@ function getHomagePalette() {
 function getAnalogousHomagePalette() {
   let color1 = getRandomColor()
   color1.l = _.floor(_.random(.6, .9, true), 2)
-  
+
   let color4 = getRandomColor()
   color4.h = getRandomHue(color1.h, .2)
   color4.l = _.floor(_.random(.1, .4, true), 2)

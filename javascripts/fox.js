@@ -2,8 +2,8 @@
 // ANNI ALBERS
 
 // Basic variables
-let fox = {
-  width: d3.select('#homage').node().getBoundingClientRect().width,
+var fox = {
+  width: d3.select('#fox').node().getBoundingClientRect().width,
 }
 
 fox.triangleHeight = _.floor(fox.width / 30)
