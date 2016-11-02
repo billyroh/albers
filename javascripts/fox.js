@@ -109,10 +109,10 @@ fox.coordinates.secondary = getSecondaryCoordinates(fox.coordinates.primary)
 
 function getPrimaryCoordinates() {
   let dataset = []
-  for (let x = 0; x < ((fox.width / fox.triangleHeight) + 2); x++) {
-    for (let y = 0; y < ((fox.width / fox.triangleHeight) + 2); y++) {
-      let xCoordinate = x * fox.triangleHeight - (fox.triangleHeight / 2)
-      let yCoordinate = y * fox.triangleHeight - (fox.triangleHeight / 2)
+  for (let x = 0; x < (fox.width / fox.triangleHeight); x++) {
+    for (let y = 0; y < (fox.width / fox.triangleHeight); y++) {
+      let xCoordinate = _.floor(x * fox.triangleHeight - (fox.triangleHeight / 2))
+      let yCoordinate = _.floor(y * fox.triangleHeight - (fox.triangleHeight / 2))
       dataset.push(getPoints(xCoordinate, yCoordinate))
     }
   }
@@ -159,10 +159,10 @@ function getOffset(points) {
   _.forEach(pointsArray, (point, index) => {
     pointsArray[index] = parseFloat(pointsArray[index])
   })
-  let halfHeight = _.floor(fox.triangleHeight / 3.5)
-  let point1 = `${pointsArray[0] - halfHeight}, ${pointsArray[1] + halfHeight}`
-  let point2 = `${pointsArray[2] - halfHeight}, ${pointsArray[3] + halfHeight}`
-  let point3 = `${pointsArray[4] - halfHeight}, ${pointsArray[5] + halfHeight}`
+  let offset = _.floor(fox.triangleHeight / 3.5)
+  let point1 = `${pointsArray[0] - offset}, ${pointsArray[1] + offset}`
+  let point2 = `${pointsArray[2] - offset}, ${pointsArray[3] + offset}`
+  let point3 = `${pointsArray[4] - offset}, ${pointsArray[5] + offset}`
 
   return `${point1}, ${point2}, ${point3}`
 }
