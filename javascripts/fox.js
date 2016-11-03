@@ -194,6 +194,8 @@ function drawTriangles() {
       .attr('opacity', .9)
 }
 
+// Takes in series of coordinates and creates a single path out of them.
+// This is more performant than creating many polygons.
 function createPath(coordinates) {
   let path = ''
   _.forEach(coordinates, (triangle, i) => {
