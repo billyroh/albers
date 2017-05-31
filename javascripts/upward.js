@@ -1,5 +1,5 @@
 // UPWARD
-// JOSEF & ANNI ALBERS
+// JOSEF ALBERS
 
 // Basic variables
 var upward = {
@@ -13,7 +13,7 @@ let pixelValue = _.round(upward.width / 40);
 upward.palette = getUpwardPalette()
 
 function getUpwardPalette() {
-  return _.sample(['black', 'grey', 'white'])
+  return _.sample(['#B81736', '#101812', '#526875', '#96ACBA', '#D3DADB'])
 }
 
 
@@ -21,21 +21,21 @@ function getUpwardPalette() {
 upward.canvas =
   d3.select('#upward')
       .append('svg')
-      .attr('width', fox.width)
-      .attr('height', fox.width)
+      .attr('width', upward.width)
+      .attr('height', upward.width)
 
-upward.canvas.style('background-color', 'grey')
+upward.canvas.style('background-color', getUpwardPalette())
 
 // Horizontal bars
 function generateHorizontalBars() {
-  let width = _.random(4, 40)
-  let numberOfBars = _.random(3, 10)
+  let width = _.random(5, 20)
+  let numberOfRows = _.random(3, 10)
 
   let xOffset = _.random(30) * pixelValue
   let yOffset = _.random(30) * pixelValue
 
   let path = ''
-  for (let i = 0; i < numberOfBars; i++) {
+  for (let i = 0; i < numberOfRows; i++) {
     let baseY = i * pixelValue * 2
     let point1 = `M ${xOffset}, ${yOffset + baseY}`
     let point2 = `L ${xOffset + width * pixelValue}, ${yOffset + baseY}`
@@ -52,7 +52,7 @@ function generateHorizontalBars() {
 }
 
 let horizontalBarsData = []
-let numberOfHorizontalBars = _.random(10, 30)
+let numberOfHorizontalBars = _.random(8, 15)
 for (let i = 0; i < numberOfHorizontalBars; i++) {
   horizontalBarsData.push(generateHorizontalBars())
 }
@@ -67,14 +67,14 @@ for (let i = 0; i < numberOfHorizontalBars; i++) {
 
 // Vertical bars
 function generateVerticalBars() {
-  let height = _.random(4, 10)
-  let numberOfBars = _.random(3, 8)
+  let height = _.random(5, 10)
+  let numberOfColumns = _.random(3, 8)
 
   let xOffset = _.random(30) * pixelValue
   let yOffset = _.random(30) * pixelValue
 
   let path = ''
-  for (let i = 0; i < numberOfBars; i++) {
+  for (let i = 0; i < numberOfColumns; i++) {
     let baseX = i * pixelValue * 2
 
     let point1 = `M ${xOffset + baseX}, ${yOffset}`
@@ -92,7 +92,7 @@ function generateVerticalBars() {
 }
 
 let verticalBarsData = []
-let numberOfVerticalBars = _.random(5, 10)
+let numberOfVerticalBars = _.random(3, 8)
 for (let i = 0; i < numberOfVerticalBars; i++) {
   verticalBarsData.push(generateVerticalBars())
 }
@@ -111,8 +111,8 @@ function generateRectangles() {
   let xOffset = _.random(30) * pixelValue
   let yOffset = _.random(30) * pixelValue
 
-  let width = _.random(5, 20) * pixelValue
-  let height = _.random(5, 20) * pixelValue
+  let width = _.random(10, 35) * pixelValue
+  let height = _.random(10, 35) * pixelValue
 
   let point1 = `M ${xOffset}, ${yOffset}`
   let point2 = `L ${xOffset + width}, ${yOffset}`
@@ -127,7 +127,7 @@ function generateRectangles() {
 }
 
 let rectangleData = []
-let numberOfRectangles = _.random(5, 10)
+let numberOfRectangles = _.random(2, 8)
 for (let i = 0; i < numberOfRectangles; i++) {
   rectangleData.push(generateRectangles())
 }
@@ -135,6 +135,7 @@ for (let i = 0; i < numberOfRectangles; i++) {
 let dataset = _.flatten([horizontalBarsData, verticalBarsData])
 dataset = _.shuffle(dataset)
 dataset = _.flatten([rectangleData, dataset])
+// dataset = horizontalBarsData
 
 // upward.rectangles = upward.canvas.selectAll('path.rectangle')
 //   .data(rectangleData)
