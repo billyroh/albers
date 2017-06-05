@@ -93,8 +93,8 @@ function getDarkAngelHairIndex(index) {
 function generateLightAngelHair(startX) {
   let result = []
 
-  let minWidth = _.round(frontal.width * 0.5)
-  let maxWidth = _.round(frontal.width * 0.8)
+  let minWidth = _.round(frontal.width * 0.2)
+  let maxWidth = _.round(frontal.width * 0.5)
   let width = _.random(minWidth, maxWidth)
 
   let minX = startX
@@ -118,20 +118,29 @@ function generateLightAngelHair(startX) {
 }
 
 function getLightAngelHairIndex(index) {
-  // if 0
-  if (index === 0) {
-    return 0
-  // if even
-  } else if (index % 2 === 0) {
-    return 2 + (3 * (index - 1))
-  // if odd
-  } else if (index % 2 === 1) {
-    return 3 + (3 * (index - 1))
+  let roll = _.random(0, 1)
+  if (roll === 0) {
+    return index * 3
+  } else if (roll === 1) {
+    return 2 + (index * 3)
   }
+  //
+  //
+  //
+  // // if 0
+  // if (index === 0) {
+  //   return 0
+  // // if even
+  // } else if (index % 2 === 0) {
+  //   return 2 + (3 * (index - 1))
+  // // if odd
+  // } else if (index % 2 === 1) {
+  //   return 3 + (3 * (index - 1))
+  // }
 }
 
 // Dark penne
-let numberOfPenneColumns = _.random(4, 6)
+let numberOfPenneColumns = _.random(3, 5)
 let darkPenneData = []
 let previousX = 0
 
@@ -146,13 +155,13 @@ for (let i = 0; i < numberOfPenneColumns; i++) {
 darkPenneData = _.flatten(darkPenneData)
 
 // Dark angel hair
-let numberOfDarkAngelHairColumns = _.random(4, 6)
+let numberOfDarkAngelHairColumns = _.random(1, 2)
 let darkAngelHairData = []
 previousX = 0
 
 for (let i = 0; i < numberOfDarkAngelHairColumns; i++) {
-  let minX = _.round(frontal.width * 0.05)
-  let maxX = _.round(frontal.width * 0.2)
+  let minX = _.round(frontal.width * 0.005)
+  let maxX = _.round(frontal.width * 0.5)
   let startX = previousX + _.random(minX, maxX)
   darkAngelHairData.push(generateDarkAngelHair(startX))
   previousX = startX
