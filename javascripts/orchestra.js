@@ -30,7 +30,7 @@ function getOrchestraPalette() {
 function getHighContrastOrchestraPalette() {
   let darkL = {
     min: 0.0,
-    max: 0.1,
+    max: 0.2,
   }
 
   let lightL = {
@@ -235,6 +235,7 @@ function setOrchestraSwatches(colors) {
     d3.select(`#orchestra${i + 1}-h`).property('value', `${color.h}`)
     d3.select(`#orchestra${i + 1}-s`).property('value', `${color.s * 100}`)
     d3.select(`#orchestra${i + 1}-l`).property('value', `${color.l * 100}`)
+    d3.select(`#orchestra${i + 1}-swatch`).style('background-color', getHsl(color))
   })
 }
 
@@ -322,20 +323,23 @@ function backgroundTransformString(xCoordinate, yCoordinate) {
 orchestra.canvas.on('mousemove', function () {
   let xCoordinate = d3.mouse(this)[0]
   let yCoordinate = d3.mouse(this)[1]
+  animateOrchestra(xCoordinate, yCoordinate)
+})
 
+function animateOrchestra(x, y) {
   orchestra.foregroundLines
-    .style('transform', foregroundTransformString(xCoordinate, yCoordinate))
+    .style('transform', foregroundTransformString(x, y))
     .style('transform-origin', '50% 50% 0')
     .style('transition', 'none')
   orchestra.midgroundLines
-    .style('transform', midgroundTransformString(xCoordinate, yCoordinate))
+    .style('transform', midgroundTransformString(x, y))
     .style('transform-origin', '50% 50% 0')
     .style('transition', 'none')
   orchestra.backgroundLines
-    .style('transform', backgroundTransformString(xCoordinate, yCoordinate))
+    .style('transform', backgroundTransformString(x, y))
     .style('transform-origin', '50% 50% 0')
     .style('transition', 'none')
-})
+}
 
 orchestra.canvas.on('mouseup', () => {
   redrawOrchestra()

@@ -226,6 +226,7 @@ function handleOrientation(event) {
 
   animateHomage(gamma, beta)
   animateFox(gamma, beta)
+  animateOrchestra(gamma, beta)
 }
 
 var deviceBetaScale = d3.scaleLinear()
