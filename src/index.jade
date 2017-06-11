@@ -129,20 +129,52 @@ body
   section
     .row.bottom-xs
       .col-xs-12.col-md-6
-        .canvas#frontal
-      .col-xs-12.col-md-6: .controls
-        h3 Josef Albers
-        h2: a.black( href='http://www.albersfoundation.org/art/josef-albers/glass/#slide5' ) Frontal
-        button.button.mt4( onclick='redrawFrontal()' ) Redraw
-  section
-    .row.bottom-xs
-      .col-xs-12.col-md-6
         .canvas#orchestra
       .col-xs-12.col-md-6: .controls
         h3 Anni Albers
         h2: a.black( href='http://www.albersfoundation.org/art/anni-albers/prints/#slide12' ) Orchestra
+        hr
+        .row
+          .col-xs-12.mt4
+            label.fl.mr4
+              input(
+                type='radio'
+                name='orchestraType'
+                value='highContrast'
+                checked='checked'
+              )
+              span.pl2 High Contrast
+          .col-xs-12.mt3
+            label.fl
+              input.pr4(
+                type='radio'
+                name='orchestraType'
+                value='lowContrast'
+              )
+              span.pl2 Low Contrast
+        table
+          tbody
+            tr
+              th H
+              th S
+              th L
+              th
+            tr
+              td.pr2: input.orchestra-input#orchestra1-h( type='number' min='0' max='360' )
+              td.ph2: input.orchestra-input#orchestra1-s( type='number' min='0' max='100' )
+              td.ph2: input.orchestra-input#orchestra1-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#orchestra1-swatch
+            tr
+              td.pr2: input.orchestra-input#orchestra2-h( type='number' min='0' max='360' )
+              td.ph2: input.orchestra-input#orchestra2-s( type='number' min='0' max='100' )
+              td.ph2: input.orchestra-input#orchestra2-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#orchestra2-swatch
+            tr
+              td.pr2: input.orchestra-input#orchestra3-h( type='number' min='0' max='360' )
+              td.ph2: input.orchestra-input#orchestra3-s( type='number' min='0' max='100' )
+              td.ph2: input.orchestra-input#orchestra3-l( type='number' min='0' max='100' )
+              td.pl2: .swatch.ba.b--black-10.br2#orchestra3-swatch
         button.button.mt4( onclick='redrawOrchestra()' ) Redraw
   script(src='javascripts/homage.js')
   script(src='javascripts/fox.js')
-  script(src='javascripts/frontal.js')
   script(src='javascripts/orchestra.js')

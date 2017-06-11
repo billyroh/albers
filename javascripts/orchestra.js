@@ -1,43 +1,130 @@
+// ORCHESTRA
+// ANNI ALBERS
+
 // Basic variables
 var orchestra = {
-  width: d3.select('#frontal').node().getBoundingClientRect().width,
+  width: d3.select('#orchestra').node().getBoundingClientRect().width,
 }
-
-// d3 setup
-orchestra.canvas = d3.select('#orchestra')
-                  .style('background-color', 'black')
-                  .append('svg')
-                  .attr('width', orchestra.width)
-                  .attr('height', orchestra.width)
-                  .style('fill', 'black')
-
 orchestra.columnCount = 22
 orchestra.padding = _.round(orchestra.width * 0.15)
 let pixelValue = _.round((orchestra.width - orchestra.padding * 2) / orchestra.columnCount)
 
+// d3 setup
+orchestra.palette = getOrchestraPalette()
+orchestra.canvas = d3.select('#orchestra')
+                  .append('svg')
+                  .attr('width', orchestra.width)
+                  .attr('height', orchestra.width)
+                  .style('background-color', `${getHsl(orchestra.palette[0])}`)
+
+// Generate palette
+function getOrchestraPalette() {
+  let type = d3.select('input[name="orchestraType"]:checked').node().value
+  if (type === 'highContrast') {
+    return getHighContrastOrchestraPalette()
+  } else if (type === 'lowContrast') {
+    return getLowContrastOrchestraPalette()
+  }
+}
+
+function getHighContrastOrchestraPalette() {
+  let darkL = {
+    min: 0.0,
+    max: 0.1,
+  }
+
+  let lightL = {
+    min: 0.9,
+    max: 1.0,
+  }
+
+  let color1 = {
+    h: _.random(0, 360),
+    s: _.floor(_.random(.1, .5, true), 2),
+    l: _.floor(_.random(darkL.min, darkL.max, true), 2),
+  }
+
+  let color2 = {
+    h: Math.abs(color1.h - 180),
+    s: _.floor(_.random(.1, .5, true), 2),
+    l: _.floor(_.random(lightL.min, lightL.max, true), 2),
+  }
+
+  let color3 = color2
+
+  return [color1, color2, color3]
+}
+
+function getLowContrastOrchestraPalette() {
+  let color1 = {
+    h: _.random(0, 360),
+    s: _.floor(_.random(.1, .4, true), 2),
+    l: _.floor(_.random(.6, .8, true), 2),
+  }
+
+  let color2 = {
+    h: getRandomHue(color1.h, .2),
+    s: _.floor(_.random(.1, .4, true), 2),
+    l: _.floor(_.random(.3, .5, true), 2),
+  }
+
+  let color3 = {
+    h: (color1.h + _.random(100, 130)) % 360,
+    s: _.floor(_.random(.1, .4, true), 2),
+    l: _.floor(_.random(.3, .5, true), 2),
+  }
+
+  return [color1, color2, color3]
+}
+
+
+// Generate dataset
+let avoidCross = false
+
 function generateLine(startX, startY) {
-  let random = _.random(0, 3)
+  let random
+  let type = d3.select('input[name="orchestraType"]:checked').node().value
+  random = _.random(2, 3)
+
+  // If the previous line was diagonal, the current line should not be.
+  // This is to avoid making a cross, which Orchestra does not have.
+  if (avoidCross) {
+    random = _.random(2, 3)
+  } else {
+    random = _.random(0, 3)
+  }
 
   // Line 0: Down and to the left
   if (random === 0) {
+    avoidCross = true
     return {
       line: `M ${startX} ${startY} L ${startX - pixelValue} ${startY + pixelValue} `,
       type: 'down-left'
     }
   // Line 1: Down and to the right
   } else if (random === 1) {
+    avoidCross = true
     return {
       line: `M ${startX} ${startY} L ${startX + pixelValue} ${startY + pixelValue} `,
       type: 'down-right'
     }
-  // Line 2: Horizontal, left
-  } else if (random === 2) {
+  // Line 2.1: Horizontal, left
+  } else if (random === 2 && type === 'highContrast') {
+    avoidCross = false
     return {
       line: `M ${startX} ${startY} L ${startX - pixelValue} ${startY} `,
       type: 'horizontal'
     }
+  // Line 2.2: Straight down
+  } else if (random === 2 && type === 'lowContrast') {
+    avoidCross = false
+    return {
+      line: `M ${startX} ${startY} L ${startX} ${startY + pixelValue} `,
+      type: 'horizontal'
+    }
   // Line 3: None
-} else if (random === 3) {
+  } else if (random === 3) {
+    avoidCross = false
     return {
       line: ``,
       type: ``
@@ -53,10 +140,10 @@ function getLineDataset() {
   downLeftLineDataset = ''
   downRightLineDataset = ''
   horizontalDataset = ''
-  for (let x = 0; x < orchestra.columnCount; x ++) {
-    for (let y = 0; y < orchestra.columnCount; y++) {
-      let startX = orchestra.padding + (pixelValue * x)
-      let startY = orchestra.padding + (pixelValue * y)
+  for (let y = 0; y < orchestra.columnCount; y++) {
+    for (let x = 0; x < orchestra.columnCount; x ++) {
+      let startX = pixelValue * x
+      let startY = pixelValue * y
 
       let random = _.random(0, 2)
       let result = generateLine(startX, startY)
@@ -73,48 +160,82 @@ function getLineDataset() {
   }
 }
 
+orchestra.wrapper =
+  orchestra.canvas.append('g')
+    .attr('class', 'wrapper')
+    .style('transform', `translate(${orchestra.padding}px, ${orchestra.padding}px)`)
+
+orchestra.backgroundLines =
+  orchestra.wrapper.append('g')
+    .attr('class', 'background')
+    .attr('width', orchestra.columnCount * pixelValue)
+    .attr('height', orchestra.columnCount * pixelValue)
+
+orchestra.midgroundLines =
+  orchestra.wrapper.append('g')
+    .attr('class', 'midground')
+    .attr('width', orchestra.columnCount * pixelValue)
+    .attr('height', orchestra.columnCount * pixelValue)
+    .attr('x', orchestra.padding)
+    .attr('y', orchestra.padding)
+
+orchestra.foregroundLines =
+  orchestra.wrapper.append('g')
+    .attr('class', 'foreground')
+    .attr('width', orchestra.columnCount * pixelValue)
+    .attr('height', orchestra.columnCount * pixelValue)
+    .attr('x', orchestra.padding)
+    .attr('y', orchestra.padding)
+
+
 // Draw
 function redrawOrchestra() {
+  orchestra.palette = getOrchestraPalette()
   getLineDataset()
+  setOrchestraSwatches(orchestra.palette)
 
-  orchestra.canvas.selectAll('path.background-line').remove()
-  orchestra.canvas.selectAll('path.midground-line').remove()
-  orchestra.canvas.selectAll('path.foreground-line').remove()
+  orchestra.canvas.selectAll('g.background > path').remove()
+  orchestra.canvas.selectAll('g.midground > path').remove()
+  orchestra.canvas.selectAll('g.foreground > path').remove()
+
+  orchestra.canvas.style('background-color', `${getHsl(orchestra.palette[0])}`)
 
   let dataSuperset = _.shuffle([downLeftLineDataset, downRightLineDataset, horizontalDataset])
 
-  orchestra.backgroundLines =
-    orchestra.canvas.selectAll('path.background-line')
-      .data([1])
-      .enter()
-      .append('path')
+  orchestra.backgroundLines.selectAll('path.background-line')
+    .data([1])
+    .enter()
+    .append('path')
+      .attr('d', dataSuperset[0])
+      .attr('fill', 'none')
+      .attr('stroke', `${getHsl(orchestra.palette[1])}`)
+      .attr('class', 'background-line')
 
-  orchestra.backgroundLines.attr('d', dataSuperset[0])
-    .attr('fill', 'none')
-    .attr('stroke', 'white')
-    .attr('class', 'background-line')
+  orchestra.midgroundLines.selectAll('path.midground-line')
+    .data([1])
+    .enter()
+    .append('path')
+      .attr('d', dataSuperset[1])
+      .attr('fill', 'none')
+      .attr('stroke', `${getHsl(orchestra.palette[2])}`)
+      .attr('class', 'midground-line')
 
-  orchestra.midgroundLines =
-    orchestra.canvas.selectAll('path.midground-line')
-      .data([1])
-      .enter()
-      .append('path')
+  orchestra.foregroundLines.selectAll('path.foreground-line')
+    .data([1])
+    .enter()
+    .append('path')
+      .attr('d', dataSuperset[2])
+      .attr('fill', 'none')
+      .attr('stroke', `${getHsl(orchestra.palette[2])}`)
+      .attr('class', 'foreground-line')
+}
 
-  orchestra.midgroundLines.attr('d', dataSuperset[1])
-    .attr('fill', 'none')
-    .attr('stroke', 'white')
-    .attr('class', 'midground-line')
-
-  orchestra.foregroundLines =
-    orchestra.canvas.selectAll('path.foreground-line')
-      .data([1])
-      .enter()
-      .append('path')
-
-  orchestra.foregroundLines.attr('d', dataSuperset[2])
-    .attr('fill', 'none')
-    .attr('stroke', 'white')
-    .attr('class', 'foreground-line')
+function setOrchestraSwatches(colors) {
+  _.forEach(colors, (color, i) => {
+    d3.select(`#orchestra${i + 1}-h`).property('value', `${color.h}`)
+    d3.select(`#orchestra${i + 1}-s`).property('value', `${color.s * 100}`)
+    d3.select(`#orchestra${i + 1}-l`).property('value', `${color.l * 100}`)
+  })
 }
 
 redrawOrchestra()
@@ -162,26 +283,6 @@ orchestra.backgroundTranslateScale = d3.scaleLinear()
   .range([(backgroundTranslate * -1), backgroundTranslate])
   .clamp(true)
 
-orchestra.midgroundScaleScale = d3.scaleLinear()
-  .domain([0, 0.7])
-  .range([1, 1])
-  .clamp(true)
-
-orchestra.backgroundScaleScale = d3.scaleLinear()
-  .domain([0, 0.7])
-  .range([1, 1])
-  .clamp(true)
-
-orchestra.midgroundOpacityScale = d3.scaleLinear()
-  .domain([0, 1])
-  .range([0, 0.15])
-  .clamp(true)
-
-orchestra.backgroundOpacityScale = d3.scaleLinear()
-  .domain([0, 1])
-  .range([0, 0.3])
-  .clamp(true)
-
 function foregroundTransformString(xCoordinate, yCoordinate) {
   let scaledX = orchestra.cursorScale(xCoordinate)
   let scaledY = orchestra.cursorScale(yCoordinate)
@@ -191,7 +292,6 @@ function foregroundTransformString(xCoordinate, yCoordinate) {
   let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
   let translateXString = `translateX(${orchestra.foregroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.foregroundTranslateScale(scaledY)}px)`
-  // return `${rotateString} ${translateXString} ${translateYString}`
   return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
 }
 
@@ -202,10 +302,8 @@ function midgroundTransformString(xCoordinate, yCoordinate) {
   let rotateYString = `rotateX(${orchestra.midgroundRotateScale(scaledY) * -1}deg)`
   let rotateZString = `rotateZ(0)`
   let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
-  let scaleString = `scale(${orchestra.midgroundScaleScale(Math.abs(scaledX) + Math.abs(scaledY))})`
   let translateXString = `translateX(${orchestra.midgroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.midgroundTranslateScale(scaledY)}px)`
-  // return `${rotateString} ${scaleString} ${translateXString} ${translateYString}`
   return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
 }
 
@@ -216,23 +314,9 @@ function backgroundTransformString(xCoordinate, yCoordinate) {
   let rotateYString = `rotateX(${orchestra.backgroundRotateScale(scaledY) * -1}deg)`
   let rotateZString = `rotateZ(0)`
   let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
-  let scaleString = `scale(${orchestra.backgroundScaleScale(Math.abs(scaledX) + Math.abs(scaledY))})`
   let translateXString = `translateX(${orchestra.backgroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.backgroundTranslateScale(scaledY)}px)`
-  // return `${rotateString} ${scaleString} ${translateXString} ${translateYString}`
-  return `perspective(${orchestra.width * 3}px) ${rotateString} ${scaleString} ${translateXString} ${translateYString}`
-}
-
-function midgroundOpacity(xCoordinate, yCoordinate) {
-  let scaledX = orchestra.cursorScale(xCoordinate)
-  let scaledY = orchestra.cursorScale(yCoordinate)
-  return 1 - orchestra.midgroundOpacityScale(Math.abs(scaledX) + Math.abs(scaledY))
-}
-
-function backgroundOpacity(xCoordinate, yCoordinate) {
-  let scaledX = orchestra.cursorScale(xCoordinate)
-  let scaledY = orchestra.cursorScale(yCoordinate)
-  return 1 - orchestra.backgroundOpacityScale(Math.abs(scaledX) + Math.abs(scaledY))
+  return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
 }
 
 orchestra.canvas.on('mousemove', function () {
@@ -242,11 +326,47 @@ orchestra.canvas.on('mousemove', function () {
   orchestra.foregroundLines
     .style('transform', foregroundTransformString(xCoordinate, yCoordinate))
     .style('transform-origin', '50% 50% 0')
+    .style('transition', 'none')
   orchestra.midgroundLines
     .style('transform', midgroundTransformString(xCoordinate, yCoordinate))
     .style('transform-origin', '50% 50% 0')
+    .style('transition', 'none')
   orchestra.backgroundLines
     .style('transform', backgroundTransformString(xCoordinate, yCoordinate))
-    .style('opacity', backgroundOpacity(xCoordinate, yCoordinate))
     .style('transform-origin', '50% 50% 0')
+    .style('transition', 'none')
+})
+
+orchestra.canvas.on('mouseup', () => {
+  redrawOrchestra()
+})
+
+orchestra.canvas.on('mouseleave', function () {
+  orchestra.foregroundLines
+    .style('transform', `translate(0, 0)`)
+    .style('transition', 'all 250ms ease-in-out')
+  orchestra.midgroundLines
+    .style('transform', `translate(0, 0)`)
+    .style('transition', 'all 250ms ease-in-out')
+  orchestra.backgroundLines
+    .style('transform', `translate(0, 0)`)
+    .style('transition', 'all 250ms ease-in-out')
+})
+
+
+// Listeners
+d3.selectAll('.orchestra-input').on('input', () => {
+  // Get values from input fields
+  let colors = []
+  _.forEach(_.range(1, 3), (index) => {
+    let color = {
+      h: parseFloat(d3.select(`#orchestra${index}-h`).property('value')),
+      s: parseFloat(d3.select(`#orchestra${index}-s`).property('value')) / 100,
+      l: parseFloat(d3.select(`#orchestra${index}-l`).property('value')) / 100,
+    }
+    colors.push(color)
+  })
+
+  orchestra.palette = colors
+  redrawOrchestra()
 })
