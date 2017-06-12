@@ -5,7 +5,7 @@
 var orchestra = {
   width: d3.select('#orchestra').node().getBoundingClientRect().width,
 }
-orchestra.columnCount = 22
+orchestra.columnCount = 23
 orchestra.padding = _.round(orchestra.width * 0.15)
 let pixelValue = _.round((orchestra.width - orchestra.padding * 2) / orchestra.columnCount)
 
@@ -59,7 +59,7 @@ function getLowContrastOrchestraPalette() {
   let color1 = {
     h: _.random(0, 360),
     s: _.floor(_.random(.1, .4, true), 2),
-    l: _.floor(_.random(.6, .8, true), 2),
+    l: _.floor(_.random(.7, .9, true), 2),
   }
 
   let color2 = {
@@ -89,14 +89,14 @@ function generateLine(startX, startY) {
   // If the previous line was diagonal, the current line should not be.
   // This is to avoid making a cross, which Orchestra does not have.
   if (avoidCross) {
-    random = _.random(2, 3)
+    random = _.random(1, 3)
   } else {
     random = _.random(0, 3)
   }
 
   // Line 0: Down and to the left
   if (random === 0) {
-    avoidCross = true
+    avoidCross = false
     return {
       line: `M ${startX} ${startY} L ${startX - pixelValue} ${startY + pixelValue} `,
       type: 'down-left'
@@ -289,8 +289,7 @@ function foregroundTransformString(xCoordinate, yCoordinate) {
   let scaledY = orchestra.cursorScale(yCoordinate)
   let rotateXString = `rotateY(${orchestra.foregroundRotateScale(scaledX)}deg)`
   let rotateYString = `rotateX(${orchestra.foregroundRotateScale(scaledY) * -1}deg)`
-  let rotateZString = `rotateZ(0)`
-  let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
+  let rotateString = `${rotateXString} ${rotateYString}`
   let translateXString = `translateX(${orchestra.foregroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.foregroundTranslateScale(scaledY)}px)`
   return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
@@ -301,8 +300,7 @@ function midgroundTransformString(xCoordinate, yCoordinate) {
   let scaledY = orchestra.cursorScale(yCoordinate)
   let rotateXString = `rotateY(${orchestra.midgroundRotateScale(scaledX)}deg)`
   let rotateYString = `rotateX(${orchestra.midgroundRotateScale(scaledY) * -1}deg)`
-  let rotateZString = `rotateZ(0)`
-  let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
+  let rotateString = `${rotateXString} ${rotateYString}`
   let translateXString = `translateX(${orchestra.midgroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.midgroundTranslateScale(scaledY)}px)`
   return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
@@ -313,8 +311,7 @@ function backgroundTransformString(xCoordinate, yCoordinate) {
   let scaledY = orchestra.cursorScale(yCoordinate)
   let rotateXString = `rotateY(${orchestra.backgroundRotateScale(scaledX)}deg)`
   let rotateYString = `rotateX(${orchestra.backgroundRotateScale(scaledY) * -1}deg)`
-  let rotateZString = `rotateZ(0)`
-  let rotateString = `${rotateXString} ${rotateYString} ${rotateZString}`
+  let rotateString = `${rotateXString} ${rotateYString}`
   let translateXString = `translateX(${orchestra.backgroundTranslateScale(scaledX)}px)`
   let translateYString = `translateY(${orchestra.backgroundTranslateScale(scaledY)}px)`
   return `perspective(${orchestra.width * 3}px) ${rotateString} ${translateXString} ${translateYString}`
