@@ -140,8 +140,8 @@ function getLineDataset() {
   downLeftLineDataset = ''
   downRightLineDataset = ''
   horizontalDataset = ''
-  for (let y = 0; y < orchestra.columnCount; y++) {
-    for (let x = 0; x < orchestra.columnCount; x ++) {
+  for (let y = 1; y < orchestra.columnCount; y++) {
+    for (let x = 1; x < orchestra.columnCount; x ++) {
       let startX = pixelValue * x
       let startY = pixelValue * y
 
@@ -168,25 +168,29 @@ orchestra.wrapper =
 orchestra.backgroundLines =
   orchestra.wrapper.append('g')
     .attr('class', 'background')
-    .attr('width', orchestra.columnCount * pixelValue)
-    .attr('height', orchestra.columnCount * pixelValue)
+
+orchestra.backgroundLines.append('rect')
+  .attr('width', orchestra.columnCount * pixelValue)
+  .attr('height', orchestra.columnCount * pixelValue)
+  .attr('fill', 'none')
 
 orchestra.midgroundLines =
   orchestra.wrapper.append('g')
     .attr('class', 'midground')
-    .attr('width', orchestra.columnCount * pixelValue)
-    .attr('height', orchestra.columnCount * pixelValue)
-    .attr('x', orchestra.padding)
-    .attr('y', orchestra.padding)
+
+orchestra.midgroundLines.append('rect')
+  .attr('width', orchestra.columnCount * pixelValue)
+  .attr('height', orchestra.columnCount * pixelValue)
+  .attr('fill', 'none')
 
 orchestra.foregroundLines =
   orchestra.wrapper.append('g')
     .attr('class', 'foreground')
-    .attr('width', orchestra.columnCount * pixelValue)
-    .attr('height', orchestra.columnCount * pixelValue)
-    .attr('x', orchestra.padding)
-    .attr('y', orchestra.padding)
 
+orchestra.foregroundLines.append('rect')
+  .attr('width', orchestra.columnCount * pixelValue)
+  .attr('height', orchestra.columnCount * pixelValue)
+  .attr('fill', 'none')
 
 // Draw
 function redrawOrchestra() {
@@ -240,9 +244,15 @@ function setOrchestraSwatches(colors) {
 }
 
 redrawOrchestra()
+orchestra.foregroundLines
+  .style('transform', `rotate(0deg)`)
+orchestra.midgroundLines
+  .style('transform', `rotate(0deg)`)
+orchestra.backgroundLines
+  .style('transform', `rotate(0deg)`)
 
 // Interaction
-foregroundRotate = 15
+foregroundRotate = 20
 midgroundRotate = foregroundRotate * .9
 backgroundRotate = midgroundRotate * .9
 foregroundTranslate = orchestra.width * 0.02

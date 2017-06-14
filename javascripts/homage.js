@@ -220,29 +220,38 @@ d3.selectAll('.homage-input').on('input', () => {
   drawSquares()
 })
 
-function handleOrientation(event) {
-  let beta = deviceBetaScale(event.beta)
-  let gamma = deviceGammaScale(event.gamma)
+let initialBeta, initialGamma
 
-  animateHomage(gamma, beta)
-  animateFox(gamma, beta)
-  animateOrchestra(gamma, beta)
+function handleOrientation(event) {
+  // On initial load, record the initial beta and gamma values.
+  if (!initialBeta && !initialGamma) {
+    initialBeta = event.beta
+    initialGamma = event.gamma
+  }
+
+  let deviceBetaScale = d3.scaleLinear()
+    .domain([initialBeta - 90, initialBeta + 90])
+    .range([0, homage.width])
+    .clamp(true)
+
+  let deviceGammaScale = d3.scaleLinear()
+    .domain([initialGamma - 50, initialGamma + 50])
+    .range([0, homage.width])
+    .clamp(true)
+
+  let relativeBeta = deviceBetaScale(event.beta)
+  let relativeGamma = deviceGammaScale(event.gamma)
+
+  animateHomage(relativeGamma, relativeBeta)
+  animateFox(relativeGamma, relativeBeta)
+  animateOrchestra(relativeGamma, relativeBeta)
 }
 
-var deviceBetaScale = d3.scaleLinear()
-  .domain([-90, 90])
-  .range([0, homage.width])
-  .clamp(true)
-
-var deviceGammaScale = d3.scaleLinear()
-  .domain([-50, 50])
-  .range([0, homage.width])
-  .clamp(true)
-
 if (window.DeviceOrientationEvent) {
-    window.addEventListener("deviceorientation", _.throttle(handleOrientation, 10), true);
+  window.addEventListener("deviceorientation", _.throttle(handleOrientation, 10), true);
 } else if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', _.throttle(handleOrientation, 10), true);
+  window.addEventListener('devicemotion', _.throttle(handleOrientation, 10), true);
 } else {
-    window.addEventListener("MozOrientation", _.throttle(handleOrientation, 10), true);
+  console.log('MozOrientation')
+  window.addEventListener("MozOrientation", _.throttle(handleOrientation, 10), true);
 }
