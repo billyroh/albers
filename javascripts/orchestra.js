@@ -160,32 +160,37 @@ function getLineDataset() {
   }
 }
 
+// Set up the groups for the different layers
+//// A parent wrapper for all layers
 orchestra.wrapper =
   orchestra.canvas.append('g')
     .attr('class', 'wrapper')
     .style('transform', `translate(${orchestra.padding}px, ${orchestra.padding}px)`)
 
+//// Create the 3 layers
 orchestra.backgroundLines =
   orchestra.wrapper.append('g')
     .attr('class', 'background')
-
-orchestra.backgroundLines.append('rect')
-  .attr('width', orchestra.columnCount * pixelValue)
-  .attr('height', orchestra.columnCount * pixelValue)
-  .attr('fill', 'none')
 
 orchestra.midgroundLines =
   orchestra.wrapper.append('g')
     .attr('class', 'midground')
 
-orchestra.midgroundLines.append('rect')
+orchestra.foregroundLines =
+  orchestra.wrapper.append('g')
+    .attr('class', 'foreground')
+
+//// Append a dummy rect to force all g elements to be the same width, height
+//// This is to ensure rotation and translation don't look funky
+orchestra.backgroundLines.append('rect')
   .attr('width', orchestra.columnCount * pixelValue)
   .attr('height', orchestra.columnCount * pixelValue)
   .attr('fill', 'none')
 
-orchestra.foregroundLines =
-  orchestra.wrapper.append('g')
-    .attr('class', 'foreground')
+orchestra.midgroundLines.append('rect')
+  .attr('width', orchestra.columnCount * pixelValue)
+  .attr('height', orchestra.columnCount * pixelValue)
+  .attr('fill', 'none')
 
 orchestra.foregroundLines.append('rect')
   .attr('width', orchestra.columnCount * pixelValue)
@@ -244,12 +249,6 @@ function setOrchestraSwatches(colors) {
 }
 
 redrawOrchestra()
-orchestra.foregroundLines
-  .style('transform', `rotate(0deg)`)
-orchestra.midgroundLines
-  .style('transform', `rotate(0deg)`)
-orchestra.backgroundLines
-  .style('transform', `rotate(0deg)`)
 
 // Interaction
 foregroundRotate = 20
