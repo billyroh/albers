@@ -251,7 +251,4 @@ if (window.DeviceOrientationEvent) {
   window.addEventListener("deviceorientation", _.throttle(handleOrientation, 10), true);
 } else if (window.DeviceMotionEvent) {
   window.addEventListener('devicemotion', _.throttle(handleOrientation, 10), true);
-} else {
-  console.log('MozOrientation')
-  window.addEventListener("MozOrientation", _.throttle(handleOrientation, 10), true);
 }
