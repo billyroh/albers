@@ -235,7 +235,7 @@ function handleOrientation(event) {
     .clamp(true)
 
   let deviceGammaScale = d3.scaleLinear()
-    .domain([initialGamma - 50, initialGamma + 50])
+    .domain([initialGamma - 45, initialGamma + 45])
     .range([0, homage.width])
     .clamp(true)
 
