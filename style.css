@@ -83,9 +83,15 @@ a.black {
 a.black:hover {
   text-decoration: underline; }
 
+.button-group {
+  display: flex;
+  flex-wrap: wrap; }
+
 a.button {
   color: #1a1a1a;
-  text-decoration: none; }
+  text-decoration: none;
+  margin-top: 1em;
+  margin-right: 3em; }
 
 button,
 a.button {
